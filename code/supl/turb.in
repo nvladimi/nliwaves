@@ -1,0 +1,51 @@
+# sample input file for optical turbulence
+
+# geometry parameters
+
+  Nx           4096    # number of point in x-direction
+  Ny           4096    # Ny = Nx
+  Lx           25.6    # length of the domain in x-direction
+  Ly           25.6    # Ly = Lx
+  dealias      32      # size of the smoothing filter; negative - no dealiasing
+
+# initial conditions
+
+  ic_type      multigauss
+  ic_n         100     # number of collapses
+  ic_h         2.0     # avgerage height of the collapse
+  ic_r         1.0     # maximum radius of the collapse
+  ic_x0        0       # x-location (not used)
+  ic_y0        0       # y-location (not used)
+  ic_seed      15821   # random seed
+
+# physics parameters
+
+  coefA        1       # coef "a" in the NLS equation   
+  coefB       20       # coef "b" in the NLS equation
+  coefC        0       # not used
+  coefE        0.01    # coef "epsilon" in the NLS equation
+  focus        1       # focusing (+1) or defocusing (-1)
+  force        1       # constant (1) or DF (2)
+
+# control parameters
+
+  restart     0        # file number to restart from
+  tinit       0.       # time corresponding to restart file
+  tmax       50.0      # time at the end of simulation
+  dtInfo      0.01     # time intervals when to save basic info
+  dnDiag      10       # diagnostics is done every so many info intervals
+  dnData      100      # binary data is saved every so many info intervals
+  dtmax       1.0      # max timestep
+  CFL         1.0      # dt = min( dtmax, CFL*(dx)^2 ) 
+  order       4        # order of splitstep (2 or 4)
+
+# diagnostics parameters
+
+  pdfNbins    1200     # number of bins for PDF count
+  pdfMax      100      # maximum |Psi| for PDF count
+  clpsNmax    10000    # max length of collapse history
+  clpsCmax    100      # max number of active collapses per process
+  clpsPsi1    6.0      # coarse threshold
+  clpsPsi2   12.0      # fine threshold, Psi2 > Psi1 
+
+

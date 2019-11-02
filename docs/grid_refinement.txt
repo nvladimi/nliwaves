@@ -1,0 +1,36 @@
+-----------------------------------------------------------
+  "DOUBLE-THE-GRID" REFINEMENT
+-----------------------------------------------------------
+
+
+  The current version of the code can adjust the grid to fit broader
+  spectrum, when a collapse becomes localized.  The adjustment is
+  implemented as follows.
+
+  At every time step, the spectrum of |psi_k|^2 is averaged over the
+  angle and compared to the threshold value at two |k|, k_up and k_dn.
+  If |psi_k_up|^2 exceed the threshold, the number of modes is doubled
+  in each direction; if |psi_k_dn|^2 is below threshold, the number of
+  modes is halved.  The redistribution of the modes among the
+  processes are shown in the hand-written sketch,
+  "grid_refinement.pdf".  When the grid is refined or derefined, the
+  time step is adjusted to obey the same CFL condition.
+
+  The grid adjustment can be used with constant forcing term in the
+  equation.  However the forcing of selected modes require a constant
+  grid.
+
+  Code parameters:
+
+      Ngrids       # number of grids (Ngrids=1 means no refinement)
+      grid         # grid to start (coarsest = 0),  grid < Ngrids
+      N0           # size of coarsest grid is N0xN0
+      Lx           # domain size in x-direction, in physical units
+      Ly           # Ly = Lx
+      dealiasZ     # dealiasing starts at kmax = dealiasZ * N/2
+      dealiasF     # size of the smoothing filter, in points
+      regridZup    # k_up =  regridZup * N/2; regridZup < dealiasZ
+      regridZdn    # k_dn =  regridZdn * N/2; regridZdn < regridZup/2
+      regridTh     # refinement threshold on |psi_k|^2
+
+

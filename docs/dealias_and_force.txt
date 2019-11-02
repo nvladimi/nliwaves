@@ -1,0 +1,112 @@
+-----------------------------------------------------------
+  DEALIASING AND FORCING
+-----------------------------------------------------------
+
+  Dealiasing
+------------
+
+  Dealiasing zeros out high-frequency modes after each linear step,
+
+      psi_k := g_k psi_k.
+
+  Here, g_k is one inside an inner square, |kx,ky| < kmax; zero
+  outside the outer square, |kx,ky| > (kmax+filter); in the filter
+  layer g_k diminishes smoothly.  More precisely,
+
+      g_k = g(qx)g(qy),          
+
+      qx = (|kx| - kmax)/filter,
+      qy = (|ky| - kmax)/filter,
+  
+              /  0,                    q < 0,
+      g(q) =  |  q^2 (3 - 2q),         0 < q < 1,   
+              \  1,                    q > 1.
+
+  
+  Code parameters:
+
+      dealiasZ     # fraction of modes (kmax = dealiasZ * N/2)
+      dealiasF     # size of the smoothing filter, in points
+
+
+
+  Forcing
+---------
+
+  Forcing amplifies or dampens modes (during the linear step),
+
+      d/dt psi_k = f_k psi_k.
+
+  The function f_k depends on a type of forcing.  Currently the
+  following types of forcing are implemented.  Among them, only
+  constant forcing works with the "double-the-grid" refinement;
+  the rest require single, non-adaptive grid.
+
+
+  (1) Constant Forcing
+----------------------
+
+      f_k = const = b*epsilon
+
+  Code parameters:
+
+      coefB       # coef "b" in the NLS equation
+      coefE       # coef "epsilon" in the NLS equation
+      force       # constant (1), DF (2), or hiK (3)
+
+
+
+  (2) Dyachenko-Falkovich (1996) Forcing  (DF)
+---------------------------------------------
+
+  The forcing has a pumping term and a damping term, which work
+  in circular layers, f_k = f(|k|): 
+
+                |k| < f_kmin   :  no forcing
+      f_kmin  < |k| < f_kmax   :  pumping and (small) damping
+      f_kmax  < |k| < f_kdamp  :  no pumping, damping increases
+      f_kdamp < |k|            :  no pumping, damping saturates
+
+  For exact expressions for the pumping and damping terms, please see
+  the Dyachenko-Falkovich (1996) paper. The terms are taken with
+  coefficients
+
+      f(k) = alpha pump(k) + beta damp(k).
+
+  Code Parameters:
+
+      force       # constant (1), DF (2), or hiK (3)
+      f_kmin      # min mode for DF or hiK forcing
+      f_kmax      # max mode for DF or hiK forcing
+      f_kdamp     # damping mode for DF forcing
+      f_alpha     # pumping coef for DF or hiK forcing
+      f_beta      # damping coef for DF forcing
+
+
+  (3) High Frequency Forcing (hiK)
+----------------------------------
+
+  The forcing is impemented as a single term, which switches it sign
+  at the border between pumping and damping layers, f_k = f(|k|): 
+
+                |k| < f_kmin   :  no forcing, f(k) = 0;  
+      f_kmin  < |k| < f_kmax   :  pumping,    f(k) > 0;
+      f_kmax  < |k|            :  damping,    f(k) < 0.
+
+
+  In the forcing region, 
+
+      f_k = 4 alpha q^2 (1 - q^2),  
+
+  where  q = (k - f_kmin) / (k - f_kmax), so that 0<q<1.
+
+  Code Parameters:
+
+      force       # constant (1), DF (2), or hiK (3)
+      f_kmin      # min mode for DF or hiK forcing
+      f_kmax      # max mode for DF or hiK forcing
+      f_alpha     # pumping coef for DF or hiK forcing
+
+
+-----------------------------------------------------------
+

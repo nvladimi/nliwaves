@@ -1,0 +1,68 @@
+-----------------------------------------------------------
+  RUNNING ON PEQUENA (EXAMPLE)
+-----------------------------------------------------------
+
+  Learn about home, work, and scratch filesystems, your quotas,
+  backups, purge policies, etc.  Decide how you organize 
+  your directories.
+
+  Checkout the code from SVN repository to your work directory.
+
+     >> svn checkout http://nls.googlecode.com/svn/trunk nls
+
+  Load modules for compiler and fft library.
+
+     >> module load mvapich-intel fftw/2.1.5/mvapich-intel
+
+  Compile the code.
+
+     >> cd nls/code
+     >> make
+
+  Move executable to the final location.
+
+     >> mv nls.x ~/work/bin
+
+  Switch to run directory. To start a job the directory need to
+  contain input file, submission script and "qr7x7.DAT".
+  Modify submission input file and submission script for your problem.
+  To submit the job use "qsub", to cancel use "qdel", to see what's 
+  running use "qstat -a".
+
+     >> cp ~/work/nls/code/pequena.sub .
+     >> cp ~/work/nls/code/multi.in .
+     >> qsub pequena.sub 
+        10153.pequena
+     >> qstat -a | grep nata
+        10153.pequena  nata  debug  multi_1x8  4304  1  --  --  00:30 R 00:04
+
+  In this example, we use multiple collapse setup with input file "multi.in".
+  The code will produce the following files:
+
+     multi.out         echoed parameters and runtime messages(text)   
+     multi.dat         max, averaged, integral quantities (text)   
+     multi.clps        history of individual collapses (text)
+     multi.timers      performance info (text)
+     multi.pdf.000?    probability density function of |psi| (text)
+     multi.spc.000?    averaged over the angle spectrum of |psi|^2 (text)
+     multi.psi.000?    psi(x,y) also used for restart (binary)
+     multi.tag         small text file with restart time and file number
+
+  Copy needed output to machine with matlab, gnuplot, etc.  
+  You might find useful some matlab post-processing scripts 
+  from "nls/post_m", for example "read_psi.m".
+
+     matlab> f=read_psi('multi.psi.0000', 512);
+     matlab> imagesc(abs(f))
+     matlab> f=read_psi('multi.psi.0004', 512);
+     matlab> imagesc(abs(f))
+
+     gnuplot> set datafile commentschars "#%"
+     gnuplot> plot 'multi.dat' u 1:2 w p 3, 'multi.clps' u 1:2 w l 1
+
+
+  For more information on controlling output and on output files see 
+  "output_files.txt".
+
+-----------------------------------------------------------
+

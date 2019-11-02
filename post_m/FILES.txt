@@ -1,0 +1,60 @@
+
+-----------------------------------------------------------
+  FILES: MATLAB/OCTAVE POST-PROCESSING SCRIPTS
+-----------------------------------------------------------
+
+  For usage info, see m-file headers.
+  The format of output files are described in their headers.
+
+
+  Readers and Converters 
+-------------------------------
+
+  read_psi.m             read binary file, return complex array
+  reduce_psi.m           reduce the size of Psi array
+  resize_psi.m           double the size of Psi array
+  vtk_psi.m              reduce the size and convert to VTK for Paraview 
+
+  rebin_pdf.m            resample PDFs into larger bins
+  reavg_any.m            average several text files of the same format
+
+  reformatPL.m           rewrite text data to Pavel's format
+
+
+
+  Post-processing of text data
+------------------------------
+
+  clps_post.m            compute beta, gamma, and derivatives
+  clps_hmax.m            find "hmax" as function "beta" at earlier heights
+  clps_pdfmax.m          collect PDF of collapse maxima
+
+  clps_history.m         ??? - connect collapses in time, do we need it?
+  clps_history_select.m  ??? - something mysterious, kept just in case
+
+  clps_all.m             small wrapper for processing multiple files
+
+
+
+  Post-processing of binary data
+--------------------------------
+
+  psi_corrR_gradphase.m  spacial corr. function of phase gradient
+  psi_corrR_phase.m      spacial corr. function of phase
+  psi_corrR_conv.m       spacial corr. function of Psi, using convolution
+
+  psi_corrtime.m         temporal corr. function of Psi
+
+  psi_pdf.m              compute PDF of Psi
+
+  psi_images.m           simple images of |psi| and phase
+  psi_images_hpg.m       images of |psi|, phase, and gradient of phase
+  psi_images_HN.m        images of energy and number of particles
+
+  psi_all.m              small wrapper for processing multiple files
+
+
+-----------------------------------------------------------
+
+
+-----------------------------------------------------------

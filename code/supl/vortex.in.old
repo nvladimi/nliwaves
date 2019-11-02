@@ -1,0 +1,43 @@
+#
+# DOES NOT WORK:  VORTEX NONLINEARITY IS NOT CODED
+#
+# sample input file for filament vortex
+
+# geometry
+
+  Nx           256
+  Ny           256
+  Lx           25600
+  Ly           25600
+
+
+# initial conditions
+
+  ic_type      vortex
+  ic_n         1
+  ic_h         0.00245
+  ic_r         1500
+  ic_x0        12800
+  ic_y0        12800
+
+
+# physics parameters
+
+  n0           1.000259
+  visc         0.0795568663175714    # 1/(4*pi*n0)
+  alpha        1                     # coef. before psi^3 term
+  coefA        1.6016e+15;           # UV filament evolution
+  coefB        0                     # not used
+  coefC        1.4451e-05;           # UV filament evolution
+  noise        0                     # not used
+
+
+# control parameters
+
+  restart     0
+  tinit       0.
+  tmax        100000
+  tsave1      1000
+  tsave2     -1
+  tsave3     -1
+  CFL         0.1

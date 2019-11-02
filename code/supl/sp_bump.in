@@ -1,0 +1,58 @@
+#
+# Sample input file for spectral IC with localized initial spectrum
+#
+#               |psi|_k ~ -(k-kmin)(k-kmax)
+#
+#---------------------------------------------------------
+
+# geometry parameters
+
+  Ngrids        1      # number of grids
+  grid          0      # grid to start (coarsest = 0)
+  N0           512     # size of coarsest grid is N0xN0
+  Lx           12.8    # length of the domain in x-direction
+  Ly           12.8    # Ly = Lx
+  dealiasZ      0.5    # relative K where dealiasing starts
+  dealiasF      8      # size of the smoothing filter, in points
+
+
+# physics parameters
+
+  coefA        1.0     # coef "a" in the NLS equation
+  coefB       20.0     # coef "b" in the NLS equation
+  coefC        1.0     # coef "c" in the NLS equation
+  coefE        0.01    # coef "epsilon" in the NLS equation
+  expoS        0.0     # exponent "s" in the equation
+  focus        1       # focusing (+1) or defocusing (-1)
+  force        1       # constant (1) or DF (2)
+
+
+# initial conditions
+
+  ic_type      sp_bump # localized initial spectrum
+  ic_seed    313       # random seed
+  ic_kmin      4       # min mode of initial spectrum
+  ic_kmax     24       # max mode of initial spectrum
+  ic_npart  1000       # number of particles N
+
+
+# control parameters
+
+  tmax        1.0      # time at the end of simulation
+  dnInfo      16       # step intervals when to save basic info
+  dnDiag      10       # diagnostics is done every so many info intervals
+  dnData      10       # binary data is saved every so many info intervals
+  CFL         1.0      # dt = CFL*(dx)^2 
+  order       4        # order of splitstep (2 or 4)
+
+
+# diagnostics parameters
+
+  pdfNbins    100      # number of bins for PDF count
+  pdfMax      10       # maximum |Psi| for PDF count
+  clpsNmax    1000     # max length of collapse history
+  clpsCmax    50       # max number of active collapses per process
+  clpsPsi0    6.0      # threshold
+  clpsRate    5.0      # frequency of collapse diagnostics 
+
+

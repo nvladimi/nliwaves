@@ -1,0 +1,17 @@
+#!/bin/sh
+##PBS -q UNMe
+#PBS -N kelseg 
+#PBS -l walltime=00:10:00
+#PBS -l nodes=1:ppn=4
+#PBS -k eo
+##PBS -j oe
+##PBS -m b
+##PBS -m e
+
+. ${MODULESHOME}/init/sh
+
+module load mvapich-intel
+
+cd $HOME/scratch/kelseg
+
+mpirun -machinefile $PBS_NODEFILE -np 4 ./serial_jobs.sh  

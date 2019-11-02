@@ -1,0 +1,126 @@
+-----------------------------------------------------------
+  CYCLOPS - 1D CODE WITH RADIAL SYMMETRY
+-----------------------------------------------------------
+
+  This code models isolated radially symmetric collapses in the radial
+  coordinates.  It solves the focusing NLS equation
+
+       i dPsi/dt + (1-i*a*eps)*del^2(Psi) +     
+
+            + (1+i*c*eps*|Psi|^s)*|Psi|^2*Psi = i*b*eps*Psi
+
+  using Adams-Bashforth time integration of 3rd order.  The spatial
+  derivatives are computed either spectrally or by 4th order finite
+  differences.  The code uses the periodic boundary conditions in
+  [-L,L] domain. The initial conditions are Gaussian for Re(Psi) and
+  zero for Im(Psi).  The width, r0, and the height, h0, of the initial
+  Gaussian are input parameters, as well the coefficients in the
+  a,b,c,s, and eps in the equation.
+
+  If derivatives are computed spectrally, the code is stable at CFL =
+  0.04, and dx=1/160 is enough to resolve collapses up to |psi|_max =
+  50.  For finite difference scheme, the stable CFL = 0.08, and
+  dx=1/320 is needed to resolve the same collapse.  Computation time
+  is comparable.
+  
+
+  Compiling
+-----------
+
+  To compile the code, either link in fftw3 library:
+
+     gcc -O3 cyclops.c -I/usr/local/fftw/fftw-3.2.2/include
+             -L/usr/local/fftw/fftw-3.2.2/lib -lfftw3 -lm
+
+  or turn off FFT support:      
+
+      gcc -O3 cyclops.c -DNOFFT -lm                             
+
+
+  Running
+---------
+
+  The parameters are given to the code as a command line options.  If
+  no options given, the code runs with the default settings.  In any
+  case, the parameters being used for the run are echoed to the
+  screen.  Below is the example of screen output.
+
+      >> ~/bin/cyclops_nofft 
+
+      Code compiled without FFT support. 
+      Spectral derivatives are not available. 
+
+      started with parameters:
+
+      /Users/nata/bin/cyclops_nofft -f cyl
+         -a 1.000000 -b 0.000000 -c 1.000000 -s 0.000000 -eps 0.010000
+         -r0 1.000000 -h0 3.200000 -tend 10.000000 -L 12.800000 -N 1024
+         -spectral 0 -cfl 0.040000 -nout1 160 -nout2 1600
+
+      for derived parameters see header in "cyl.clps"
+
+
+  Parameters:
+
+       a, b, c, s, eps    parameters of the equation
+       r0, h0             width and height of initial Gaussian
+       tend               final time (see note below)
+       L, N               domain size and number of points
+       spectral           compute derivatives spectrally (1) or not (0)    
+       cfl                dt = CFL (dx)^2
+       nout1              frequency of writing psi(0), in timesteps
+       nout2              frequency of writing psi(r), in timesteps
+
+
+  Note: the code terminates when collapse decays to the half of its
+  time maximum, or when time reaches "tend", whichever comes first.
+
+
+  OUTPUT FILE *.clps
+--------------------
+
+   Text data in a same format which is used for 2D runs (for
+   compatibility of post-processing).  See "collapse_diagnostics.txt".
+   The data is preceded by the header with the run parameters.
+
+
+
+  OUTPUT FILES *.rad.*
+----------------------
+
+  Text file showing Psi as a function of radius.  The columns in the
+  file correspond to:
+
+   1.r
+   2.abs(Psi) 
+   3.Re(Psi) 
+   4.Im(Psi) 
+
+
+  COMPARING TO 2D RESULTS
+-------------------------
+
+  The symmeric 2D simulations can be compared to the results of the
+  radial code using "dataray" utility.  It reads in a 2D binary file
+  (Re,Im) and writes out the text file with the ray of data starting
+  form point i0,j0.  The ray extends to the right until the end of
+  domain.  The domain is assumed to be square, NxN points, with size
+  L.  The format of the output file is the same as files *.rad.*
+  described above.
+
+
+  compiling:
+
+               gcc dataray.c -o dataray.x
+
+  usage:
+               dataray.x infile outfile N i0 j0 L
+
+  where i0,j0=0,..,N-1.  (Run without arguments for reminder.)
+
+
+  When creating 2D data, make sure that the collapse maximim is
+  located exactly at i0,j0.
+
+
+-----------------------------------------------------------

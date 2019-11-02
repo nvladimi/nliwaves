@@ -1,0 +1,63 @@
+#
+# Sample input file for collapse immersed in the Gaussian noise
+#
+#---------------------------------------------------------
+
+# geometry parameters
+
+  Ngrids        3      # number of grids
+  grid          0      # grid to start (coarsest = 0)
+  N0           512     # size of coarsest grid is N0xN0
+  Lx           12.8    # length of the domain in x-direction
+  Ly           12.8    # Ly = Lx
+  dealiasZ      0.5    # relative K where dealiasing starts
+  dealiasF      8      # size of the smoothing filter, in points
+  regridZup     0.45   # relative K where regrid-up condition is checked
+  regridZdn     0.20   # relative K where regrid-down cond. is checked
+  regridTh      1.e-16 # regridding (up or down) threshold
+
+
+# physics parameters
+
+  coefA        1.0     # coef "a" in the NLS equation
+  coefB        0.0     # coef "b" in the NLS equation
+  coefC        1.0     # coef "c" in the NLS equation
+  coefE        0.01    # coef "epsilon" in the NLS equation
+  expoS        0.0     # exponent "s" in the equation
+  focus        1       # focusing (+1) or defocusing (-1)
+  force        1       # constant (1) or DF (2)
+
+
+# initial conditions
+
+  ic_type  gauss_noise # gaussian spectrum
+  ic_h         3.2     # height of the collapse
+  ic_r         1.0     # radius of the collapse
+  ic_x0        6.4     # x-location
+  ic_y0        6.4     # y-location
+  ic_seed    313       # random seed
+  ic_kmin      9.27    # spectrum width
+  ic_kmax      0       # zero spectrum at k>kmax
+  ic_npart     50      # number of particles N 
+
+
+# control parameters
+
+  tmax        0.5      # time at the end of simulation
+  dnInfo       4       # step intervals when to save basic info
+  dnDiag      100      # diagnostics is done every so many info intervals
+  dnData      100      # binary data is saved every so many info intervals
+  CFL         1.0      # dt = CFL*(dx)^2 
+  order       4        # order of splitstep (2 or 4)
+
+
+# diagnostics parameters
+
+  pdfNbins    100      # number of bins for PDF count
+  pdfMax      10       # maximum |Psi| for PDF count
+  clpsNmax    1000     # max length of collapse history
+  clpsCmax    50       # max number of active collapses per process
+  clpsPsi0    6.0      # threshold
+  clpsRate    5.0      # frequency of collapse diagnostics 
+
+

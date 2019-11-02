@@ -1,0 +1,17 @@
+
+# geometry parameters
+
+  N0       1024  # size of coarsest grid, N0xN0
+  Lx       25.6  # size in x-direction, negative - units of pi
+  Ly       25.6  # Ly = Lx
+
+
+# initial conditions
+
+  ic_type  gausshex    # array of gaussian beams
+  ic_r        2.0      # 0.61    # radius of the collapse
+  ic_n        5        # 10       # number of beams in each direction
+  ic_a        0.4      # radius to spacing ratio
+  ic_seed    313       # random seed
+  ic_npart   1168      # number of particles N 
+

@@ -1,0 +1,83 @@
+-----------------------------------------------------------
+  COLLAPSE DIAGNOSTICS
+-----------------------------------------------------------
+
+  In the turbulence problem diagnostics of individual collapses has to
+  be done in the code (as opposed to post-processing) because strong
+  collapses develop extremely fast and have to be monitored
+  essentially every time step.
+
+  To do it we maintain the database of "active" collapses.  We
+  introduce a threshold in collapse amplitude, above which a local
+  maximum is considered as a collapse. The collapses are entered into
+  database, and monitored with a rate proportional to 1/h^2, where h
+  is the height of the collapse.
+
+  New collapses are added to database at every "info" step (see
+  "output_files.txt" for more detail).  Also, at every "info" step
+  finished and lost collapses are removed from database.  Collapse is
+  considered finished, if its amplitude drops to the half of its time
+  maximum or below the threshold.  When collapse is removed from
+  database, its history is saved into a file.
+
+  For each collapse, the position of the local maximum of |psi| is
+  recorded in the history, and the following quantities interpolated
+  at the location of the maximum: amplitude |psi|, phase, and their
+  second derivatives in the radial direction.  The computational
+  procedure consists of three steps: (i) finding a local maximum of
+  |psi| on the grid; (ii) finding the off-grid location by finding the
+  best, in the least squares sense, paraboloid passing through
+  neighboring points; and (iii) interpolating computed on the grid
+  quantities to the off-grid location using bicubic interpolation.
+
+
+  Control parameters in the input file
+------------------------------------------
+
+  dnInfo     # frequency (in timesteps) of saving basic info, 
+             # to rescanning for new collapses, 
+             # and saving histories of non-active collapses
+
+  clpsNmax   # max length of the history of each collapse
+
+  clpsCmax   # max number of active collapses per process
+             # negative clpsCmax turns off collapse diagnostics
+
+  clpsPsi0   # the threshold, local maxima in |psi| above 
+             # the threshold are considered collapses 
+
+  clpsRate   # parameter controlling the frequency of collapse
+             # monitoring,
+             #              dt_update = 1/(clpsRate * h^2)
+
+
+  OUTPUT FILE *.clps
+--------------------
+
+  Text file containing the history of collapses.  The collapses are
+  separated by two blank lines for gnuplot and the string of "NaN"s
+  for matlab/octave.  Each collapse is preceded with one-line summary
+  in the form
+
+  %output= 12:   h_max( 0.2656 )= 41.467   h_end( 0.2718 )= 13.884
+ 
+  In the summary line, the numeric entries correspond to:
+
+     collapse number (consecutive since restart)
+     simulation time when collapse reaches maximum (t_max)
+     |psi| at t_max
+     simulation time when collapse is removed from the database (t_end)
+     |psi| at t_end
+
+
+  The columns in the files correspond to:
+  
+  1.t          simulation time
+  2.|psi|      amplitude at the center 
+  3.|psi|_rr   second derivative of |psi| in radial direction at the center
+  4.phase_rr   second derivative of phase in radial direction at the center  
+  5.phase      phase at the center
+
+
+
+-----------------------------------------------------------

@@ -1,0 +1,29 @@
+#!/bin/bash
+#----------------------------------------------------
+# Example SLURM job script to run multiple mpi
+# applications within one batch job on TACC's
+# Stampede system.
+#----------------------------------------------------
+#SBATCH -J r2_n04     # Job name
+#SBATCH -o r2_n04.o%j # Name of stdout output file(%j expands to jobId)
+#SBATCH -e r2_n04.e%j # Name of stderr output file(%j expands to jobId)
+#SBATCH -p development          # Submit to the 'normal' or 'development' queue
+#SBATCH -N 4                    # Total number of nodes requested (16 cores/node)
+#SBATCH -n 64                   # Total number of mpi tasks requested
+#SBATCH -t 01:00:00             # Run time (hh:mm:ss) - 1.5 hours
+
+
+fname=m2_kp80_a1e2_a
+
+cd $SLURM_SUBMIT_DIR
+#$WORK/cascade/test
+
+module load fftw3 
+
+echo '0 0 0' > $fname.tag
+ln -s ../zero.psi.0000 $fname.psi.0000
+
+
+# Launch each MPI application using the "-o" and "-n" flags
+ibrun  ./nls.x  $fname   
+

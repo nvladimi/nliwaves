@@ -1,0 +1,58 @@
+#
+# Sample input file for optical turbulence.
+#---------------------------------------------------------
+
+# geometry parameters
+
+  Ngrids        2      # number of grids
+  grid          0      # grid to start (coarsest = 0)
+  N0           256     # size of coarsest grid is N0xN0
+  Lx           12.8    # length of the domain in x-direction
+  Ly           12.8    # Ly = Lx
+  dealiasZ      0.5    # relative K where dealiasing starts
+  dealiasF      8      # size of the smoothing filter, in points
+  regridZup     0.45   # relative K where regrid-up condition is checked
+  regridZdn     0.20   # relative K where regrid-down cond. is checked
+  regridTh      1.e-10 # regridding (up or down) threshold
+
+
+# physics parameters
+
+  coefA        1.0     # coef "a" in the NLS equation
+  coefB       20.0     # coef "b" in the NLS equation
+  coefC        1.0     # coef "c" in the NLS equation
+  coefE        0.01    # coef "epsilon" in the NLS equation
+  expoS        0.0     # exponent "s" in the equation
+  focus        1       # focusing (+1) or defocusing (-1)
+  force        1       # constant (1) or DF (2)
+
+
+# initial conditions
+
+  ic_type      multigauss
+  ic_n         20      # number of collapses
+  ic_h         3.0     # average height
+  ic_r         1.0     # maximum radius
+  ic_seed      15821   # random seed
+
+
+# control parameters
+
+  tmax        0.4      # time at the end of simulation
+  dnInfo      4        # step intervals when to save basic info
+  dnDiag      10       # diagnostics is done every so many info intervals
+  dnData      10       # binary data is saved every so many info intervals
+  CFL         1.0      # dt = CFL*(dx)^2 
+  order       4        # order of splitstep (2 or 4)
+
+
+# diagnostics parameters
+
+  pdfNbins    100      # number of bins for PDF count
+  pdfMax      10       # maximum |Psi| for PDF count
+  clpsNmax    1000     # max length of collapse history
+  clpsCmax    50       # max number of active collapses per process
+  clpsPsi0    6.0      # threshold
+  clpsRate    5.0      # frequency of collapse diagnostics 
+
+

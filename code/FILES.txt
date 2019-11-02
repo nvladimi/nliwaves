@@ -1,0 +1,62 @@
+
+-----------------------------------------------------------
+  FILES
+-----------------------------------------------------------
+
+Makefile                makes nls.x, nlspost.x, or nlstest.x
+
+executable: nls.x       time evolution of 2D psi 
+
+  header.h              declaration of global functions and structures
+  main.c                main driver: time, IC, and IO manager
+  splitstep.c           computational part: splitstep and forcing
+  myfft.c               wrapper for FFTW2 routines, spectral derivatives 
+  arrays.c              creation, copying, and differentiation of arrays
+  parameters.c          read text input file, write text header
+  ic.c                  initial conditions
+  io.c                  (mostly) binary input / output
+  timers.c              collect performance info by subroutine
+  clock_gettime_stub.c  stub for system's "gettime" function (MAC only)
+
+  infodat.c             compute integral quantities, psi_max, etc 
+  spectrum.c            compute spectrum of |psi|^2
+  pdf.c                 compute pdf of |psi|
+  collapseDB.c          maintain database of collapses
+  collapseInt.c         interpolate collapse at the center 
+  collapseMisc.c        old stuff, DO NOT USE! 
+
+
+executable: nlspost.x   parallel post processing of binary psi
+
+  post.c                main driver; uses myfft.c, arrays.c, and timers.c   
+  post_blur.c           filter out high frequencies in psi
+  post_bumps.c          compute H(r) and NP(r) around each maximum
+  post_param.c          read text input file, write text header
+  post_io.c             (mostly) binary input / output
+
+
+executable: nlstest.x   tests for various components of the code
+
+  test_*.c              main drivers; replace main.c         
+  test_deriv.c
+  test_dgels.c
+  test_fft2d.c
+  test_fft3d.c
+  test_interp.c
+  test_myqr.c
+  test_timers.c
+
+
+small stand-along codes
+
+  cyclops.c            1D code for cylindrical (radial) collapses
+  dataray.c            extract radial data from 2D collapses
+
+directory "util"
+
+  *.in                 examples of input files
+  *.sub                examples of submission scripts
+  qr*.dat              inverted matrices Q and R in text form
+  myqr.m               matlab/octave script to create qr*.dat
+
+-----------------------------------------------------------

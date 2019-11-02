@@ -1,0 +1,35 @@
+#
+# Sample input for post-processing: computing correlation function.
+#
+#---------------------------------------------------------
+
+# geometry parameters
+
+  Ngrids         1     # max number of grids
+  N0           512     # size of coarsest grid is N0xN0
+  Lx           12.8    # length of the domain in x-direction
+  Ly           12.8    # Ly = Lx
+
+
+# files to process
+
+  fn_beg       0       # file number to start with
+  fn_end       0       # file number to finish
+  fn_inc       1       # file number increment
+  bin_out      1       # write or not binary output (1 or 0) 
+
+
+# specifics of post-processing
+
+  type      corrfun    # blur, bumps, corrfun
+
+
+#  rblur        1.0    # first blurring radius
+#  rblur        2.0    # second blurring radius
+#  rblur        4.0    # etc
+
+#  nbumps       100     # max number of bumps
+#  rbumps       1.0     # max radius of bumps
+#  hbumps       2.0     # min height of bumps
+
+

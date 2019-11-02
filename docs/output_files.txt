@@ -1,0 +1,148 @@
+-----------------------------------------------------------
+  OUTPUT FILES
+-----------------------------------------------------------
+
+
+  FREQUENCY OF OUTPUT
+
+  The code output different data at different rates.  The frequencies
+  of the output is specified by the following parameters in *.in file
+
+     dnInfo     # step intervals when to save basic info
+     dnDiag     # diagnostics is done every so many info intervals
+     dnData     # binary data is saved every so many info intervals
+
+  "Info" intervals are specified in the units of timesteps at the 
+  coarsest grid.  At these intervals
+  the code appends one line in "*.dat" file, writing integral
+  quantities computed at this particular instance.
+
+  "Diag" and "data" intervals are specified in the units of "info"
+  intervals.  At "diag" intervals, more elaborated diagnostics, such
+  as computing spectra and PDFs, is performed.  The instant quantities
+  are added to a storage in the memory.  At "data" interval, these
+  quantities are averaged over instances and written to files, and the
+  storage is emptied.  In addition, the field data, psi(x,y), is saved
+  at the "data" intervals.  The field files and the diagnostics files
+  are consecutively numbered: 0000, 0001, 0002,...  The headers of
+  diagnostics files show the number of instances, "count", which was
+  used in averaging.  The simulation time of the outputs is printed to
+  the file "*.out".
+
+  Example: suppose timestep dt=1/16, and simulation is run from t=0
+  until tmax=100.  The following lines in the input file
+
+     dnInfo  16
+     dnDiag  10
+     dnData  50
+
+  would result in 
+
+     integral quantities computed every 16 steps, or 1 time unit;
+     diagnostics taken every 10 time units;
+     data is saved every 50 time units.
+
+  The *.dat line would have 101 data lines.  There would be three sets
+  of field and diagnostic files: 0000, 0001, and 0002.  Diagnostics
+  0001 and 0002 would be computed over 5 instances (count=5).
+  Diagnostics 0000 corresponds to initial conditions (count=1), as
+  well as field data 0000, and the first line in *.dat file.
+
+-----------------------------------------------------------
+
+
+  OUTPUT FILE *.out
+
+  This is the text file with basic run information and run time
+  messages.  The file contains:
+
+     echoed simulation parameters, 
+     some initialization messages for debugging,
+     record of outputs (maps file number to simulation time),
+     some (?) info from collapse database,
+     errors and warnings.
+   
+-----------------------------------------------------------
+
+
+  OUTPUT FILE *.dat
+
+  This is the text file with the most basic diagnostics.  The columns
+  of the file correspond to:
+
+     1.time            simulation time
+     2.|psi|_max       maximum |psi| in the domain
+     3.|psi|_avg       |psi| averaged over the domain
+     4.N               total number of particles (number of waves) 
+     5.E_kin           total kinetic energy
+     6.(-focus)*E_pot  (+/-) total potential energy 
+     7.condensate      <Re(psi)>^2 + <Im(psi)>^2
+     8.vortices        fraction of domain with 
+                       |psi(x,y)| < vortexTh * avg(|psi|)
+
+-----------------------------------------------------------
+
+
+  OUTPUT FILES *.pdf.*
+
+  These are text files containing the probability density functions
+  |psi|, Re(psi), and Im(psi), computed over the whole domain.  PDFs
+  are averaged over several instances (count) and recorded at the same
+  time as restart files.  The frequency of computing PDFs are
+  specified by "dnDiag" parameter in the input file, the number of
+  bins - by "pdfNbins" parameter, and the psi interval - by "pdfMax".
+  I recommend to use the number of bins which is large and is a
+  product of different multipliers, for example pdfNbins=1200.  Such
+  PDFs can easily be coarsened later.
+
+  The columns in the files correspond to:
+
+      1.bin           bin number
+      2.psi           |psi| at the center of the bin       
+      3.pdf(abs)      PDF of |psi|, normalized to 1
+      4.pdf(Re)       PDF of Re(psi), normalized to 1
+      5.pdf(Im)       PDF of Im(psi), normalized to 1
+
+-----------------------------------------------------------
+
+
+  OUTPUT FILES *.spc.*
+
+  These are text files containing the spectrum of field |psi|^2.  The
+  spectrum is normalized to satisfy Parseval's theorem:  the total
+  number of particles (waves) in the domain is
+
+              N = L^2 sum |psi_k|^2.
+                       k
+
+  The spectrum is averaged over angle in k-space and over several
+  instances (count).  The spectrum files are recorded at the same time
+  as restart files.  The frequency of computing spectrum is specified
+  by "dnDiag" parameter in the input file.
+
+  The columns in the files correspond to:
+
+      1.k             mode number, from 0 to Nx/4
+      2.|psi|^2_k     |psi|^2 averaged in interval [k-0.5, k+0.5) 
+
+-----------------------------------------------------------
+
+
+  OUTPUT FILES *.psi.*
+
+  These are binary file with field data psi(x,y) in the format: Re,Im,
+  Re,Im, Re,Im, etc.  The frequency of the output is specified by
+  "dnData" parameter in the input file.
+
+-----------------------------------------------------------
+
+
+  OUTPUT FILE *.clps
+
+  This file contains the history of individual collapses in text
+  format, described in "collapse_diagnostics.txt".  To turn off
+  collapse diagnostics, in the input file use
+
+       clpsCmax   -1  # max number of active collapses
+
+-----------------------------------------------------------

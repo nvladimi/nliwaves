@@ -1,0 +1,84 @@
+#
+# List of all parameters accepted in input files.
+#
+# Some parameters are mutially exclusive; for more coherent
+# set of parameters see problem specific parameter files.
+#
+# Notations:
+#             I  integer
+#             F  float
+#             S  string
+#
+#---------------------------------------------------------
+
+# geometry parameters
+
+  Ngrids      I  # number of grids
+  grid        I  # grid to start at (coarsest = 0)
+  N0          I  # size of coarsest grid, N0xN0
+  Lx          F  # size in x-direction, negative - units of pi
+  Ly          F  # Ly = Lx
+  dealiasZ    F  # relative K where dealiasing starts
+  dealiasF    I  # size of the smoothing filter, in points
+  regridZup   F  # relative K where regrid-up condition is checked
+  regridZdn   F  # relative K, where regrid-down cond. is checked
+  regridTh    F  # regridding (up or down) threshold
+
+
+
+# physics parameters
+
+  coefA       F  # coef "a" in the NLS equation
+  coefB       F  # coef "b" in the NLS equation
+  coefC       F  # coef "c" in the NLS equation
+  coefE       F  # coef "epsilon" in the NLS equation
+  expoS       F  # exponent "s" in the equation
+  focus       I  # focusing (+1) or defocusing (-1)
+  force       I  # constant (1), DF (2), or hiK (3)
+  f_kmin      F  # min mode for DF or hiK forcing
+  f_kmax      F  # max mode for DF or hiK forcing
+  f_kdamp     F  # damping mode for DF forcing
+  f_alpha     F  # pumping coef for DF or hiK forcing
+  f_beta      F  # damping coef for DF forcing
+
+
+# initial conditions
+
+  ic_type     S  # gauss, multigauss, ellipse, tophat, vortex,
+                 # sp_bump, sp_tail, sp_exp, sp_gauss,
+                 # gauss_noise
+
+  ic_n        I  # number of collapses (multigauss)
+  ic_h        F  # avgerage height (except spectral ICs)
+  ic_r        F  # maximum radius (except spectral ICs)
+  ic_x0       F  # x-location (gauss, ellipse, tophat, vortex)
+  ic_y0       F  # y-location (gauss, ellipse, tophat, vortex)
+  ic_a        F  # half length (ellipse)
+  ic_b        F  # half width (ellipse)
+  ic_seed     I  # random seed (multigauss, spectral IC)
+  ic_kmin     F  # min mode of initial spectrum (spectral IC)
+  ic_kmax     F  # max mode of initial spectrum (spectral IC)
+  ic_npart    F  # number of particles N (spectral IC)
+
+
+# control parameters
+
+  tmax        F  # time at the end of simulation
+  dnInfo      I  # coarse step intervals when to save basic info
+  dnDiag      I  # diagnostics is done every so many info intervals
+  dnData      I  # binary data is saved every so many info intervals
+  dt0         F  # if set, overrides dt from CFL at coarsest grid
+  CFL         F  # dt = CFL*(dx)^2 
+  order       I  # order of splitstep (2 or 4)
+
+
+# diagnostics parameters
+
+  pdfNbins    I  # number of bins for PDF count
+  pdfMax      F  # maximum |Psi| for PDF count
+  clpsNmax    I  # max length of collapse history
+  clpsCmax    I  # max number of active collapses per process, negative - none
+  clpsPsi0    F  # threshold
+  clpsRate    F  # frequency of collapse diagnostics 
+  vortexTh    F  # vortex threshold, fraction of |psi|_avg
+

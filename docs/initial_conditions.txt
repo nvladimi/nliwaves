@@ -1,0 +1,217 @@
+-----------------------------------------------------------
+  INITIAL CONDITIONS
+-----------------------------------------------------------
+
+  The code distinguish several initial conditions (IC), some are set
+  in physical space while others are set in Fourier space.  The type
+  of initial condition is specified by the string "ic_type" in the
+  input file, as well as by parameters of initial conditions.  The
+  parameters are specific to the type of IC.  Each IC has an example
+  input file in code/supl directory.  All examples are set in the
+  domain of 12.8x12.8 space units at the resolution of 512x512 points
+  and run for t~1.  These runs are under-resolved and not suitable for
+  DNS studies, but they take only a few minutes on a modern
+  workstation.
+
+  Below we list a short description of IC, with the list of
+  parameters as they used in the example files.
+
+
+  Gauss (example file gauss.in)
+-------
+
+  Places the Gaussian of given width and height at specified location.
+
+  Re(psi(x,y)) = h * exp ( -[(x-x0)^2 + (y-y0)^2] / r^2 )
+  Im(psi(x,y)) = 0
+
+  parameters:
+
+     ic_type      gauss
+     ic_h         3.2     # height of the collapse
+     ic_r         1.0     # radius of the collapse
+     ic_x0        6.4     # x-location
+     ic_y0        6.4     # y-location
+
+
+  Multigauss (example file multi.in)
+------------
+
+  Superposition of several the Gaussian (as above) of random width and
+  height at random location.
+
+  parameters:
+
+     ic_type      multigauss
+     ic_n         20      # number of collapses
+     ic_h         3.0     # average height
+     ic_r         1.0     # maximum radius
+     ic_seed      15821   # random seed
+
+
+  Ellipse  (example file ellipse.in)
+---------
+
+  Places the spatially-stretched Gaussian of given width and height at
+  specified location.
+
+  Re(psi(x,y)) = h * exp ( -[(x-x0)^2/a^2 + (y-y0)^2/b^2] )
+  Im(psi(x,y)) = 0
+
+  parameters:  
+
+     ic_type      ellipse
+     ic_h         3.2     # height of the collapse
+     ic_a         1.6     # half-lenght
+     ic_b         0.8     # half-lenght
+     ic_x0        6.4     # x-location
+     ic_y0        6.4     # y-location
+
+
+  Tophat (example file tophat.in) 
+--------
+
+  Places psi of constant amplitude inside the circle of given of given
+  radius at specified location.
+
+  Re(psi(x,y)) = h,   for (x-x0)^2 + (y-y0)^2 < r^2
+  Re(psi(x,y)) = 0,   for (x-x0)^2 + (y-y0)^2 > r^2
+  Im(psi(x,y)) = 0
+
+  parameters:
+
+     ic_type      tophat
+     ic_h         2.0     # height of the collapse
+     ic_r         2.0     # radius
+     ic_x0        6.4     # x-location
+     ic_y0        6.4     # y-location
+
+
+  Vortex (example file vortex.in)
+--------
+
+  Places a ring of |psi| of given height at specified location.
+  The phase is doing 2pi loop around the ring.
+
+  |psi(x,y)| = 4*h*R/r*(1-R/r),  for  R=sqrt((x-x0)^2+(y-y0)^2)<r;
+   phi(x,y)  = atan(y/x); 
+
+  |psi(x,y)| = 0,  for  R>r
+
+  parameters:
+
+     ic_type      vortex  # a ring with the phase doing 2pi loop
+     ic_h         3.2     # height of the ring
+     ic_r         2.0     # outer radius of the ring
+     ic_x0        6.4     # x-location
+     ic_y0        6.4     # y-location
+
+
+-----------------------------------------------------------
+  Spectral initial conditions
+-----------------------------------------------------------
+
+  The initial conditions are specified by given spectrum, 
+  |psi|_k = f(k),  where k is the magnitude of (kx,ky) vector. 
+  The phases of the modes are selected randomly.  The spectrum
+  is scaled so that the total number of particles matched given N.
+
+
+Spectral Bump  (example file sp_bump.in)
+-------------
+
+  Initial spectrum is localized between kmin and kmax:
+
+  |psi|_k ~ -(k-kmin)(k-kmax),      kmin < k < kmax 
+  |psi|_k = 0,                      otherwise
+
+
+  parameters:
+
+     ic_type      sp_bump # localized initial spectrum
+     ic_seed    313       # random seed
+     ic_kmin      4       # min mode of initial spectrum
+     ic_kmax     24       # max mode of initial spectrum
+     ic_npart  1000       # number of particles N
+
+
+Spectral Tail  (example file sp_tail.in)
+------------- 
+
+  Initial spectrum is flat at small k and has "thermal equilibrium"
+  tail for large k:
+
+  |psi|_k ~ 1/sqrt(k^2 - kmin^2),   k < kmax
+  |psi|_k = 0,                      otherwise 
+
+  parameters:
+
+     ic_type   sp_tail    # initial spectrum with long tail
+     ic_seed    313       # random seed
+     ic_kmin      4       # spectrum flattens for k<kmin
+     ic_kmax    128       # zero spectrum at k>kmax
+     ic_npart  1000       # number of particles N
+
+
+Spectral Exponential Tail  (example file sp_exp.in)
+-------------------------
+
+  |psi|_k ~ exp(-k/kmin),           k < kmax
+  |psi|_k = 0,                      otherwise 
+
+  parameters:
+
+     ic_type   sp_exp     # spectrum with exponential tail
+     ic_seed    313       # random seed
+     ic_kmin      8       # spectrum width
+     ic_kmax    128       # zero spectrum at k>kmax
+     ic_npart   500       # number of particles N 
+
+
+Gaussian Noise  (example file sp_gauss.in)
+--------------
+
+  |psi|_k ~ exp[-(k/kmin)^2],       k < kmax
+  |psi|_k = 0,                      otherwise 
+
+  parameters:
+
+     ic_type   sp_gauss   # gaussian spectrum
+     ic_seed    313       # random seed
+     ic_kmin      8       # spectrum width
+     ic_kmax    128       # zero spectrum at k>kmax
+     ic_npart   100       # number of particles N 
+
+
+Gaussian collapse immersed into gaussian noise (example file gauss_noise.in)
+----------------------------------------------
+
+  This IC is special in the sense that it combines spectral and
+  physical IC.  The initial data are computed as follows: first the
+  domain is filled with gaussian noise (as in "sp_gauss"), then the
+  noise is zeroed out in the place of future collapse, and finally
+  the collapse data is added.
+
+  The input parameters are correlation radius and number of particles
+  of the noise background, and the width and the height of the
+  collapse.  This set of parameters completely specifies the first step
+  and the last step.  The middle step - creating a hole in random data
+  - has to provide smooth transition between the collapse region and
+  random field.  For more info, see handwritten notes,
+  "ic_gauss_noise.pdf".
+
+
+  parameters:
+
+     ic_type   gauss_noise
+     ic_h         3.2     # height of the collapse
+     ic_r         1.0     # radius of the collapse
+     ic_x0        6.4     # x-location
+     ic_y0        6.4     # y-location
+     ic_seed    313       # random seed
+     ic_kmin      8       # spectrum width
+     ic_kmax    128       # zero spectrum at k>kmax
+     ic_npart   500       # number of particles N 
+
+
+-----------------------------------------------------------
