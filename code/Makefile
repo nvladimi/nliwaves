@@ -7,6 +7,7 @@ NLS     = nls.x
 IC      = nls_ic.x
 DSE     = nls_ds.x
 NLSTEST = nlstest.x
+NLSTIME = nlstime.x
 NLSPOST = nlspost.x
 GUIDE   = guide.x
 
@@ -33,6 +34,9 @@ C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
             timers.c  clock_gettime_stub.c
 
 C_NLSTEST = test_deriv.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c \
+            timers.c  clock_gettime_stub.c
+
+C_NLSTIME = test_ffttime.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c \
             timers.c  clock_gettime_stub.c
 
 # Compilers
@@ -123,12 +127,23 @@ ifeq ($(HOSTNAME), stampede)
 endif
 
 
+ifeq ($(HOSTNAME), comet-ln2.sdsc.edu)
+         #LIB_MPI =
+         INC_FFT = -I/opt/fftw/3.3.4/intel/mvapich2_ib/include
+         LIB_FFT = -L/opt/fftw/3.3.4/intel/mvapich2_ib/lib  -lfftw3_mpi -lfftw3
+endif
+
+
+
+
+
 #-------------------------------------------------
 
 OBJ_NLS     = $(C_NLS:.c=.o ) $(F_NLS:.f=.o )
 OBJ_DSE     = $(C_DSE:.c=.o )
 OBJ_IC      = $(C_IC:.c=.o )
 OBJ_NLSTEST = $(C_NLSTEST:.c=.o )
+OBJ_NLSTIME = $(C_NLSTIME:.c=.o )
 OBJ_NLSPOST = $(C_NLSPOST:.c=.o )
 OBJ_GUIDE   = $(C_GUIDE:.c=.o )
 
@@ -161,6 +176,10 @@ ic:
 nlstest:
 	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_NLSTEST)
 	$(LINK) $(OPT) $(OBJ_NLSTEST) $(LIB_NLS) -o $(NLSTEST)
+
+nlstime:
+	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_NLSTIME)
+	$(LINK) $(OPT) $(OBJ_NLSTIME) $(LIB_NLS) -o $(NLSTIME)
 
 nlspost:
 	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_NLSPOST)
