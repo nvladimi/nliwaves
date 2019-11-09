@@ -182,6 +182,7 @@ extern void    fft_time_wrap (fftw_complex *A, int dir);
 extern void    fft_save_fourier (fftw_complex *A, fftw_complex *fA, int grid);
 extern void    fft_make_fourier (fftw_complex *A, fftw_complex *fA, int grid);
 
+extern void    fft_extra_init  (geom_ptr geom);
 extern void    fft_test        (fftw_complex *A, int grid);
 extern void    fft_time_test   (fftw_complex *A);
 extern void    fft_deriv_x_1D  (fftw_complex *A, int grid);

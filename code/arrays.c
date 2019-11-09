@@ -280,7 +280,7 @@ void arr2D_deriv_yy(fftw_complex **A, fftw_complex **B, int grid)
 
 /*----------------------------------------------------------------*/
 
-print_ar(double **A, int nx, int ny, int gp)
+void print_ar(double **A, int nx, int ny, int gp)
 {
   int     i,j, myid, np;
   int     flag = 0;
