@@ -10,14 +10,14 @@ NLSTEST = nlstest.x
 NLSPOST = nlspost.x
 
 # List of the sources
-# For tests use any of test_*.c as main
+# For tests use "test_timers.c", "test_ffttime.c", or "test_deriv.c" as main
 
 C_IC      = main_ic.c grids.c fftw_wrap.c fft_extra.c io.c ic.c  timers.c 
 
 C_NLS     = main.c grids.c fftw_wrap.c fft_extra.c io.c parameters.c evolve_ss.c \
             infodat.c diag_nls.c \
             diag_spectrum.c diag_pdf.c diag_qflux_avg.c\
-            timers.\
+            timers.c\
             arrays.c  collapseDB.c  collapseInt.c \
             mask.c
 
@@ -32,8 +32,7 @@ C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
             post_condensate.c \
             timers.c
 
-C_NLSTEST = test_timers.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
-
+C_NLSTEST = test_deriv.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
 
 
 # Compilers

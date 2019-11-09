@@ -7,23 +7,30 @@
 
 # BATCH -A TG-DMS140028               # Project account name
 
-#SBATCH --job-name="nlstest"
-#SBATCH --output="z.n4_N24576.o%j"    # Name of stderr output file (%j extents to jobId)
+#SBATCH --job-name="nls"
+#SBATCH --output="z.nls.o%j"          # Name of stderr output file (%j extents to jobId)
 #SBATCH --error="z.e%j"               # Name of stderr output file (%j extents to jobId)
 #SBATCH --partition=debug             # Submit to the 'debug' or 'compute' queue
-#SBATCH --nodes=4                     # Total number of nodes requested (use N=1)
-#SBATCH --ntasks-per-node=24          # Total number of mpi tasks requested (24 max)
-#SBATCH -t 00:20:00                   # Run time (hh:mm:ss) - max 30 min for debug, 48 hrs for compute/shared
+#SBATCH --nodes=1                     # Total number of nodes requested (use N=1)
+#SBATCH --ntasks-per-node=4           # Total number of mpi tasks requested (24 max)
+#SBATCH -t 00:00:05                   # Run time (hh:mm:ss) - max 30 min for debug, 48 hrs for compute/shared
 #SBATCH --export=ALL
 
 #-------------------------
 
-
+module load fftw
 
 echo SLURM NTASKS: $SLURM_NTASKS
 date
 
-ibrun ./nlstime.x n4_N24575  24576
+#timers:
+# ibrun ./nlstest.x
+
+#ffttime:
+# ibrun  ./nlstest.x blah 1024 
+
+#deriv
+# ibrun ./nlstest.x deriv
 
 
 
