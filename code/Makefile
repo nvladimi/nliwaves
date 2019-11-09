@@ -7,37 +7,34 @@ NLS     = nls.x
 IC      = nls_ic.x
 DSE     = nls_ds.x
 NLSTEST = nlstest.x
-NLSTIME = nlstime.x
 NLSPOST = nlspost.x
-GUIDE   = guide.x
 
 # List of the sources
-C_IC      = main_ic.c grids.c fftw_wrap.c fft_extra.c io.c ic.c  \
-            timers.c clock_gettime_stub.c
+# For tests use any of test_*.c as main
+
+C_IC      = main_ic.c grids.c fftw_wrap.c fft_extra.c io.c ic.c  timers.c 
 
 C_NLS     = main.c grids.c fftw_wrap.c fft_extra.c io.c parameters.c evolve_ss.c \
             infodat.c diag_nls.c \
             diag_spectrum.c diag_pdf.c diag_qflux_avg.c\
-            timers.c clock_gettime_stub.c \
+            timers.\
             arrays.c  collapseDB.c  collapseInt.c \
             mask.c
 
 C_DSE     = main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.c \
             infodat.c  diag_dse.c diag_spectrum.c \
-            timers.c clock_gettime_stub.c \
+            timers.c \
             arrays.c  collapse_one.c
 
 C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
             post_io.c post_param.c \
             post_blur.c post_bumps.c post_corrfun.c post_corrfunx.c \
             post_condensate.c \
-            timers.c  clock_gettime_stub.c
+            timers.c
 
-C_NLSTEST = test_deriv.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c \
-            timers.c  clock_gettime_stub.c
+C_NLSTEST = test_timers.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
 
-C_NLSTIME = test_ffttime.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c \
-            timers.c  clock_gettime_stub.c
+
 
 # Compilers
 CC   = mpicc
@@ -62,6 +59,17 @@ LIB_FFT      = -lfftw3_mpi -lfftw3
 INC_MPI      = 
 INC_FFT      = 
 LIB_ADD      = -lm -lrt
+
+
+
+ifeq ($(HOSTNAME), tangle)
+        LIB_MPI      = -lmpi
+        INC_MPI      =
+        INC_FFT      = -I/usr/local/include
+        LIB_ADD      = -lm
+	DEF_NLS      =
+endif
+
 
 
 ifeq ($(HOSTNAME), hooloovoo)
@@ -143,7 +151,6 @@ OBJ_NLS     = $(C_NLS:.c=.o ) $(F_NLS:.f=.o )
 OBJ_DSE     = $(C_DSE:.c=.o )
 OBJ_IC      = $(C_IC:.c=.o )
 OBJ_NLSTEST = $(C_NLSTEST:.c=.o )
-OBJ_NLSTIME = $(C_NLSTIME:.c=.o )
 OBJ_NLSPOST = $(C_NLSPOST:.c=.o )
 OBJ_GUIDE   = $(C_GUIDE:.c=.o )
 
@@ -156,7 +163,7 @@ INC_NLS     = $(INC_MPI) $(INC_FFT)
 # THERE MUST BE A Tab BEFORE THE $(CC) SYMBOL !!!
 
 default:
-	@echo "\n   options:   ic, nls, dse, hostname\n"
+	@echo "\n   options:   ic, nls, dse, nlstest, nlspost, hostname\n"
 
 .f.o:
 	$(FC) $(FFLAGS) -c $<
@@ -177,17 +184,9 @@ nlstest:
 	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_NLSTEST)
 	$(LINK) $(OPT) $(OBJ_NLSTEST) $(LIB_NLS) -o $(NLSTEST)
 
-nlstime:
-	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_NLSTIME)
-	$(LINK) $(OPT) $(OBJ_NLSTIME) $(LIB_NLS) -o $(NLSTIME)
-
 nlspost:
 	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_NLSPOST)
 	$(LINK) $(OPT) $(OBJ_NLSPOST) $(LIB_NLS) -o $(NLSPOST)
-
-guide:
-	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_GUIDE)
-	$(LINK) $(OPT) $(OBJ_GUIDE) $(LIB_NLS) -o $(GUIDE)
 
 hostname:
 	@echo $(HOSTNAME) 

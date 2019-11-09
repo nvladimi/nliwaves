@@ -78,8 +78,8 @@ int main(int argc, char **argv)
 
   /* field variable f(x,y) */
 
-  //nio = io_save_data(A[0], grid);
-  //if (myid==0)  printf("%4d:  f(x,y) \n", nio);
+  nio = io_save_data(A[0], grid);
+  if (myid==0)  printf("%4d:  f(x,y) \n", nio);
 
 
   /* fft transform forth and back */
@@ -88,9 +88,9 @@ int main(int argc, char **argv)
 
   for (i=0; i<10; i++)  fft_test(D[0], grid);
 
-  //nio = io_save_data(D[0], grid);
-  //if (myid==0)  printf("%4d:  f(x,y)    FFT fransformed twice - 0 cycles\n", nio);
-  if (myid==0)  printf("FFT fransformed twice - 10 cycles, no binary output\n");
+  nio = io_save_data(D[0], grid);
+  if (myid==0)  printf("%4d:  f(x,y)    FFT fransformed twice - 10 cycles\n", nio);
+  //if (myid==0)  printf("FFT fransformed twice - 10 cycles, no binary output\n");
 
   MPI_Finalize();
   exit(0); 

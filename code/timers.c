@@ -9,7 +9,6 @@
 #define NANO  1000000000
 #define MAXTIMERS  32
 
-
 typedef struct
 {
   char   name[80];
@@ -18,14 +17,6 @@ typedef struct
   struct timespec dt_tot, dt_min, dt_max, t_on;
 } timer_str;
 
-#ifdef __APPLE__
-typedef enum {
-        CLOCK_REALTIME,
-        CLOCK_MONOTONIC,
-        CLOCK_PROCESS_CPUTIME_ID,
-        CLOCK_THREAD_CPUTIME_ID
-} clockid_t;
-#endif
 
 /*---------------------------------------------------------*/
 
@@ -57,7 +48,7 @@ static FILE          *thefile;
 
 /*---------------------------------------------------------*/
 
-/*
+/**/
 void timers_resolution_test()
 {
   struct timespec time1, time2, time3, time4;
@@ -79,7 +70,7 @@ void timers_resolution_test()
   printf("\n");
 
 }
-*/
+/**/
 
 /*---------------------------------------------------------*/
 
