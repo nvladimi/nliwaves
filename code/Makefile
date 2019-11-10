@@ -8,6 +8,7 @@ IC      = nls_ic.x
 DSE     = nls_ds.x
 NLSTEST = nlstest.x
 NLSPOST = nlspost.x
+CAPILLARY = capillary.x
 
 # List of the sources
 # For tests use "test_timers.c", "test_ffttime.c", or "test_deriv.c" as main
@@ -33,6 +34,8 @@ C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
             timers.c
 
 C_NLSTEST = test_deriv.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
+
+C_CAPILLARY = capillary.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
 
 
 # Compilers
@@ -151,7 +154,7 @@ OBJ_DSE     = $(C_DSE:.c=.o )
 OBJ_IC      = $(C_IC:.c=.o )
 OBJ_NLSTEST = $(C_NLSTEST:.c=.o )
 OBJ_NLSPOST = $(C_NLSPOST:.c=.o )
-OBJ_GUIDE   = $(C_GUIDE:.c=.o )
+OBJ_CAPILLARY   = $(C_CAPILLARY:.c=.o )
 
 LIB_NLS     = $(LIB_MPI) $(LIB_FFT) $(LIB_ADD)
 
@@ -162,7 +165,7 @@ INC_NLS     = $(INC_MPI) $(INC_FFT)
 # THERE MUST BE A Tab BEFORE THE $(CC) SYMBOL !!!
 
 default:
-	@echo "\n   options:   ic, nls, dse, nlstest, nlspost, hostname\n"
+	@echo "\n   options:   ic, nls, dse, nlstest, nlspost, capillary, hostname\n"
 
 .f.o:
 	$(FC) $(FFLAGS) -c $<
@@ -186,6 +189,11 @@ nlstest:
 nlspost:
 	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_NLSPOST)
 	$(LINK) $(OPT) $(OBJ_NLSPOST) $(LIB_NLS) -o $(NLSPOST)
+
+capillary:
+	$(CC)   $(OPT) $(DEF_NLS) $(INC_NLS) -c $(C_CAPILLARY)
+	$(LINK) $(OPT) $(OBJ_CAPILLARY) $(LIB_NLS) -o $(CAPILLARY)
+
 
 hostname:
 	@echo $(HOSTNAME) 

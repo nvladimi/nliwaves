@@ -1,25 +1,36 @@
 #include "header.h"
 
+static  int 		 myid, np;
+static  int 		 N0;
+
+static  fftw_complex  *Eta, *Psi, *T1, *T2, *T3;
+
+static void   capillary_rhs(int grid, double a, double b);    // Eta, Psi = RHS(Eta, Psi)
+
+/* --------------------------------------------- */
+
+
 int main(int argc, char **argv)
 {
-  fftw_complex 	**A, **Agp, **D, **work;
-  fftw_complex  *df0, *df1, *df2;
-
+  fftw_complex 	**work;
+ 
   ctrl_str  ctrl;
   geom_str  geom;
   ic_str    ic;
 
   int grid = 0;
-  int gp   = 2;
 
   double   L = 1;
   int      N = 128;
-  int      myid, np;
+  int      Nx, Ny;
   int      nio;
 
   char   filename[80];
   FILE   *thefile;
   int     i;
+
+  double   a=1;
+  double   b=1;
 
   /* --------------------------------------------- */
 
@@ -58,156 +69,108 @@ int main(int argc, char **argv)
   geom.Ly = L;
 
 
+  N0 = N;
+
   /* major array allocation */
 
-  arr2D_init(&geom, gp);
+  arr2D_init(&geom, 0);
 
-  A       = arr2D_create(grid, 0);
-  Agp     = arr2D_create(grid, 2);
-  D       = arr2D_create(grid, 0);
   work    = arr2D_create(grid, 0);
 
-  df0  = (fftw_complex *) malloc( N * sizeof(fftw_complex));
-  df1  = (fftw_complex *) malloc( N * sizeof(fftw_complex));
-  df2  = (fftw_complex *) malloc( N * sizeof(fftw_complex));
+  /*--- create suppementary arrays ---*/
+
+  Nx = N0*pow(2, geom.Ngrids-1);
+  Ny = Nx/np;
+
+  Eta = (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
+  Psi = (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
+  T1 =  (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
+  T2 =  (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
+  T3 =  (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
 
 
   /* initialization */
 
   fft_init(&geom, work[0]);
   io_init(&ctrl, &geom);
-  ic_set(A[0], &geom, &ic);
+  ic_set(Eta, &geom, &ic);
 
 /* ------------------------------------------------- */
 
   /* field variable f(x,y) */
 
-  nio = io_save_data(A[0], grid);
-  if (myid==0)  printf("%4d:  f(x,y) \n", nio);
+  nio = io_save_data(Eta, grid);
+  if (myid==0)  printf("%4d:  capillary Eta\n", nio);
+
+  nio = io_save_data(Psi, grid);
+  if (myid==0)  printf("%4d:  capillary Psi\n", nio);
 
 
-  /* x-derivative */
+  capillary_rhs(grid, a, b);
 
-  arr2D_copy_gp(A, Agp, grid);
-  arr2D_deriv_x(Agp, D, grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  df/dx     (central differences)\n", nio);
+  nio = io_save_data(Eta, grid);
+  if (myid==0)  printf("%4d:  capillary dEta/dt \n", nio);
 
-  /* y-derivative */
-
-  arr2D_copy_gp(A, Agp, grid);
-  arr2D_deriv_y(Agp, D, grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  df/dy     (central differences)\n", nio);
-
-  /* xx-derivative */
-
-  arr2D_copy_gp(A, Agp, grid);
-  arr2D_deriv_xx(Agp, D, grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  d2f/dx2   (central differences)\n", nio);
-
-
-  /* yy-derivative */
-
-  arr2D_copy_gp(A, Agp, grid);
-  arr2D_deriv_yy(Agp, D, grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  d2f/dy2   (central differences)\n", nio);
-
-  /* xy-derivative */
-
-  arr2D_copy_gp(A, Agp, grid);
-  arr2D_deriv_x(Agp, D, grid);
-  arr2D_copy_gp(D, Agp, grid);
-  arr2D_deriv_y(Agp, D, grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  d2f/dxdy  (central differences)\n", nio);
-
-
-  /* fft transform forth and back */
-
-  arr2D_copy(A, D, grid);
-  fft_test(D[0], grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  f(x,y)    FFT fransformed twice\n", nio);
-
-
-  /* x-derivative */
-
-  arr2D_copy(A, D, grid);
-  fft_deriv_x(D[0], grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  df/dx     (spectral)\n", nio);
-
-  /* y-derivative */
-
-  arr2D_copy(A, D, grid);
-  fft_deriv_y(D[0], grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  df/dy     (spectral)\n", nio);
-
-  /* xx-derivative */
-
-  arr2D_copy(A, D, grid);
-  fft_deriv_xx(D[0], grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  d2f/dx2   (spectral)\n", nio);
-
-  /* yy-derivative */
-
-  arr2D_copy(A, D, grid);
-  fft_deriv_yy(D[0], grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  d2f/dy2   (spectral)\n", nio);
-
-  /* xy-derivative */
-
-  arr2D_copy(A, D, grid);
-  fft_deriv_xy(D[0], grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0)  printf("%4d:  d2f/dxdy  (spectral)\n", nio);
-
-  /* laplacian */
-
-  arr2D_copy(A, D, grid);
-  fft_laplacian(D[0], grid);
-  nio = io_save_data(D[0], grid);
-  if (myid==0) printf("%4d:  del^2(f)  (spectral)\n", nio);
-
-
-  /* spectral derivatives in 1D */
-
-  if (np == 1) {
-
-    memset(df0, 0, 2*N*sizeof(double));
-    memset(df1, 0, 2*N*sizeof(double));
-    memset(df2, 0, 2*N*sizeof(double));
-
-    for (i=0; i<N; i++)  {
-      df0[i][0] = A[N/2][i][0];
-      df1[i][0] = A[N/2][i][0];
-      df2[i][0] = A[N/2][i][0];
-    }
-
-    //fft_wrap_1D(df1, grid, FORWARD);
-    //fft_wrap_1D(df2, grid, FORWARD);
-    //fft_wrap_1D(df2, grid, BACKWARD);
-
-    fft_deriv_x_1D (df1, grid);
-    fft_deriv_xx_1D(df2, grid);
-
-    sprintf(filename,"%s_1D.txt", ctrl.runname);
-    thefile = fopen(filename, "wt");
-    fprintf(thefile, "#_1.x  2.f  3.f_x  4.f_xx\n\n"); 
-    for (i=0; i<N; i++) 
-      fprintf(thefile, "%10.6e  %10.6e  %10.6e  %10.6e\n", 
-	                i*L/N,  df0[i][0],  df1[i][0],  df2[i][0]);
-    fclose(thefile);
-
-  }
-
+  nio = io_save_data(Psi, grid);
+  if (myid==0)  printf("%4d:  capillary dPsi/dt\n", nio);
 
   MPI_Finalize();
   exit(0); 
 }
+
+/* ---------------------------------------------------------------- */
+
+void capillary_rhs(int grid, double a, double b)   // Eta, Psi = rhs(Eta, Psi) 
+{
+
+  int i, N;
+ 
+  N = N0 * pow(2,grid);
+  N = N*N/np;
+
+  for (i=0; i<N; i++){
+    T1[i][0]  = Psi[i][0];
+    T1[i][1]  = 0;
+    T2[i][0]  = Psi[i][0];
+    T2[i][1]  = 0;
+    T3[i][0]  = Eta[i][0];
+    T3[i][1]  = 0;
+  }
+
+  
+  fft_deriv_x(T1, grid);
+  fft_deriv_y(T2, grid);
+  fft_laplacian(T3, grid);
+
+  /*--  compute dPsi = laplacian(Eta) - b ( grad(Psi) )^2 / 2 --*/ 
+  /*--  compute [T1,T2] = (1 + a Eta) grad(Psi) --*/
+
+  for (i=0; i<N; i++){
+
+    Psi[i][0] = T3[i][0] - 0.5 * b * (T1[i][0]*T1[i][0] + T2[i][0]*T2[i][0]);
+    Psi[i][1] = 0;
+
+    T1[i][0]  = (1 + a * Eta[i][0]) * T1[i][0];
+    T1[i][1]  = 0;
+    
+    T2[i][0]  = (1 + a * Eta[i][0]) * T2[i][0];
+    T2[i][1]  = 0;
+  }
+
+  /*--  compute dEta = - div( (1 + a Eta) grad(Psi) )  --*/
+
+  
+  fft_deriv_x(T1, grid);
+  fft_deriv_y(T2, grid);
+
+  for (i=0; i<N; i++){
+
+    Eta[i][0] = - T1[i][0] - T2[i][0];
+    Eta[i][1] = 0;
+
+  }
+
+  
+}
+
+/* ---------------------------------------------------------------- */
