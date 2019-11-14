@@ -23,6 +23,7 @@ C_NLS     = main.c grids.c fftw_wrap.c fft_extra.c io.c parameters.c evolve_ss.c
             mask.c
 
 C_DSE     = main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.c \
+            rk.c rhs_dse.c \
             infodat.c  diag_dse.c diag_spectrum.c \
             timers.c \
             arrays.c  collapse_one.c
