@@ -1,0 +1,17 @@
+#---------------------------------------------------------
+
+# geometry parameters
+
+  N0        256  # size of coarsest grid, N0xN0
+  Lx        12.8 # size in x-direction, negative - units of pi
+  Ly        12.8 # Ly = Lx
+
+
+# initial conditions
+
+  ic_type      gauss
+  ic_h         1.60    # height of the collapse
+  ic_r         1.414   # radius of the collapse
+  ic_x0        6.4     # x-location
+  ic_y0        6.4     # y-location
+

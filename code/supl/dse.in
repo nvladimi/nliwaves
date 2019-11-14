@@ -1,0 +1,44 @@
+#---------------------------------------------------------
+
+# geometry parameters
+
+  Ngrids      6  # number of grids
+  N0        256  # size of coarsest grid, N0xN0
+  Lx       12.8  # size in x-direction, negative - units of pi
+  Ly       12.8  # Ly = Lx
+  dealiasZ  0.5  # relative K where dealiasing starts
+  dealiasF    8  # size of the smoothing filter, in points
+  regridZup  0.450000
+  regridZdn  0.200000
+  regridTh   1.000000e-10
+
+
+# physics parameters
+
+  coefA       0  # coef "a" in the NLS equation
+  coefB       0  # coef "b" in the NLS equation
+  coefC       0  # coef "c" in the NLS equation
+  coefE       0  # coef "epsilon" in the NLS equation
+  expoS       0  # exponent "s" in the equation
+  coefNu      0.5
+  coefRho    -1.0
+
+  focus      +1  # focusing (+1) or defocusing (-1)
+  force       0  # constant (1), DF (2), or hiK (3)
+
+
+# control parameters
+
+  tmax     1.30  # time at the end of simulation
+  dnInfo      2  # coarse step intervals when to save basic info
+  dnDiag    100  # diagnostics is done every so many info intervals
+  dnData    100  # binary data is saved every so many info intervals
+#  dt0     1.e-4  # if set, overrides dt from CFL at coarsest grid
+  CFL       0.20  # dt = CFL*(dx)^2 
+
+
+# diagnostics parameters
+
+  clpsNmax    1000     # max length of collapse history
+  clpsCmax       1     # max length of collapse history
+
