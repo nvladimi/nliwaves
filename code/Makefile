@@ -19,14 +19,13 @@ C_NLS     = main.c grids.c fftw_wrap.c fft_extra.c io.c parameters.c evolve_ss.c
             infodat.c diag_nls.c \
             diag_spectrum.c diag_pdf.c diag_qflux_avg.c\
             timers.c\
-            arrays.c  collapseDB.c  collapseInt.c \
-            mask.c
+            arrays.c  collapseDB.c  collapseInt.c  mask.c
 
 C_DSE     = main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.c \
             rk.c rhs_dse.c \
             infodat.c  diag_dse.c diag_spectrum.c \
             timers.c \
-            arrays.c  collapse_one.c
+            arrays.c  collapse_one.c mask.c
 
 C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
             post_io.c post_param.c \
@@ -52,7 +51,6 @@ OPT  =  -g3  #-O2
 DEF_NLS     = 
 #DEF_NLS    = -DDEBUG
 #DEF_NLS    = -DQ_FLUX_FILTER
-#DEF_NLS    = -DFIBER_WALL
 #DEF_NLS    = -DEXIT_AT_PSIMAX
 
 

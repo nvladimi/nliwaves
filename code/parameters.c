@@ -83,6 +83,7 @@ void parameters(int *argc, char ***argv,
       if( strcmp(param,"coefRho") == 0 )  phys->coefRho       = atof(value);
       if( strcmp(param,"expoS") == 0 )    phys->expoS         = atof(value);
       if( strcmp(param,"focus") == 0 )    phys->focus         = atoi(value);
+      if( strcmp(param,"mask") == 0 )     phys->mask          = atoi(value);
 
       if( strcmp(param,"f_type") == 0 )   strcpy(phys->f_type, value);
 
@@ -222,6 +223,7 @@ void print_header(geom_ptr geom, ctrl_ptr ctrl,
   fprintf(thefile, "#     coefRho = %11.4e \n", phys->coefRho);
   fprintf(thefile, "#     expoS   = %11.4e \n", phys->expoS);
   fprintf(thefile, "#     focus   = %3d\n",     phys->focus);
+  fprintf(thefile, "#     mask    = %3d\n",     phys->mask);
 
   fprintf(thefile, "#     f_type  = %s\n",    phys->f_type);
   fprintf(thefile, "#     f_kmin  = %f\n",    phys->f_kmin);

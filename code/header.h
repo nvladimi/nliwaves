@@ -80,6 +80,7 @@ typedef struct phys_param
   double coefRho;
   double expoS;
   int    focus;
+  int    mask;
   char   f_type[32];
   double f_kmin;
   double f_kmax;

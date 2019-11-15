@@ -1,5 +1,6 @@
 #include "header.h"
 
+static  int              mask;
 static  int 		 myid, np;
 static  int 		 N0;
 static  int              grid_old;
@@ -21,6 +22,10 @@ void mask_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi){
 
   int     i, j, Nx, Ny, Ngrids;
 
+  mask = phys->mask;
+
+  if (mask == 0) return;
+  
   Psi = psi;
 
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -46,7 +51,7 @@ void mask_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi){
   imMask  =  (double *) malloc( Nx*Ny * sizeof(double));
   reM =      (double **)malloc( Ny * sizeof(double *) );
   imM =      (double **)malloc( Ny * sizeof(double *) );
-
+  
 }
 
 /* ---------------------------------------------------------------- */
@@ -99,6 +104,8 @@ void mask_apply(int grid, double dt)
   int N, i;
   double u,v;
 
+  if (mask == 0) return;
+  
   N = N0 * pow(2,grid);
   N = N*N/np;
 

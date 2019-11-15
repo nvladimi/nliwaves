@@ -98,10 +98,7 @@ int main(int argc, char **argv)
   info_init      (&ctrl, &geom, &diag, psi, psihat);
   diag_init      (&ctrl, &geom, &diag, &phys, psi, psihat);
 
-
-#ifdef FIBER_WALL
   mask_init      (&geom, &phys, psi);
-#endif
 
   MPI_Barrier(MPI_COMM_WORLD);
   sprintf(msg, "#msg: all modules are initialized\n");
@@ -162,9 +159,7 @@ int main(int argc, char **argv)
       exit(0); 
     }
 
-#ifdef FIBER_WALL
-    mask_apply(grid, dt[grid]);
-#endif
+    mask_apply(grid, dt[grid]); 
 
     evolve_one_step(grid, dt[grid]);
 
