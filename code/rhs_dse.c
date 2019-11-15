@@ -9,13 +9,13 @@ static  int np;
 
 /* ---------------------------------------------------------------- */
 
-void rhs_init(geom_ptr geom, phys_ptr phys, int np_in)
+void rhs_init(geom_ptr geom, phys_ptr phys)
 {
 
   int Ngrids, N;
 
-  np = np_in;
-
+  MPI_Comm_size(MPI_COMM_WORLD, &np);
+ 
   Ngrids =  geom->Ngrids;
   N0 =  geom->N0;
 

@@ -16,12 +16,12 @@ static int np;
 
 /*--------------------------------------------------------------*/
 
-void rk_init(geom_ptr geom, fftw_complex *psi, int np_in)
+void rk_init(geom_ptr geom, fftw_complex *psi)
 {
   int N, Ngrids;
 
-  np = np_in;
-
+  MPI_Comm_size(MPI_COMM_WORLD, &np);
+  
   Ngrids =  geom->Ngrids;
   N0 =  geom->N0;
 
