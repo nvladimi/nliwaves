@@ -35,7 +35,7 @@ C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
 
 C_NLSTEST = test_deriv.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
 
-C_CAPILLARY = capillary.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
+C_CAPILLARY = capillary.c rhs_capillary.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
 
 
 # Compilers

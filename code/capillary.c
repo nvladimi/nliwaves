@@ -3,9 +3,11 @@
 static  int 		 myid, np;
 static  int 		 N0;
 
-static  fftw_complex  *Eta, *Psi, *T1, *T2, *T3;
+static  fftw_complex  *Eta, *Psi;
 
-static void   capillary_rhs(int grid, double a, double b);    // Eta, Psi = RHS(Eta, Psi)
+extern void   rhs_compute(int grid);    // Eta, Psi = RHS(Eta, Psi)
+extern void   rhs_init(geom_ptr geom, phys_ptr phys);
+extern void   rhs_init_S(fftw_complex *eta,  fftw_complex *psi);
 
 /* --------------------------------------------- */
 
@@ -16,6 +18,7 @@ int main(int argc, char **argv)
  
   ctrl_str  ctrl;
   geom_str  geom;
+  phys_str  phys;
   ic_str    ic;
 
   int grid = 0;
@@ -28,9 +31,6 @@ int main(int argc, char **argv)
   char   filename[80];
   FILE   *thefile;
   int     i;
-
-  double   a=1;
-  double   b=1;
 
   /* --------------------------------------------- */
 
@@ -48,6 +48,7 @@ int main(int argc, char **argv)
 
   memset(&geom, 0, sizeof(&geom));
   memset(&ctrl, 0, sizeof(&ctrl));
+  memset(&ctrl, 0, sizeof(&phys));
   memset(&ic,   0, sizeof(&ic));
 
   strcpy(ctrl.runname, argv[1]);
@@ -68,7 +69,10 @@ int main(int argc, char **argv)
   geom.Lx = L;
   geom.Ly = L;
 
+  phys.coefA = 1;
+  phys.coefB = 1;
 
+  
   N0 = N;
 
   /* major array allocation */
@@ -84,16 +88,16 @@ int main(int argc, char **argv)
 
   Eta = (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
   Psi = (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
-  T1 =  (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
-  T2 =  (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
-  T3 =  (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
-
 
   /* initialization */
 
   fft_init(&geom, work[0]);
   io_init(&ctrl, &geom);
   ic_set(Eta, &geom, &ic);
+
+  rhs_init(&geom, &phys);
+  rhs_init_S(Eta, Psi);
+
 
 /* ------------------------------------------------- */
 
@@ -106,7 +110,7 @@ int main(int argc, char **argv)
   if (myid==0)  printf("%4d:  capillary Psi\n", nio);
 
 
-  capillary_rhs(grid, a, b);
+  rhs_compute(grid);
 
   nio = io_save_data(Eta, grid);
   if (myid==0)  printf("%4d:  capillary dEta/dt \n", nio);
@@ -120,57 +124,3 @@ int main(int argc, char **argv)
 
 /* ---------------------------------------------------------------- */
 
-void capillary_rhs(int grid, double a, double b)   // Eta, Psi = rhs(Eta, Psi) 
-{
-
-  int i, N;
- 
-  N = N0 * pow(2,grid);
-  N = N*N/np;
-
-  for (i=0; i<N; i++){
-    T1[i][0]  = Psi[i][0];
-    T1[i][1]  = 0;
-    T2[i][0]  = Psi[i][0];
-    T2[i][1]  = 0;
-    T3[i][0]  = Eta[i][0];
-    T3[i][1]  = 0;
-  }
-
-  
-  fft_deriv_x(T1, grid);
-  fft_deriv_y(T2, grid);
-  fft_laplacian(T3, grid);
-
-  /*--  compute dPsi = laplacian(Eta) - b ( grad(Psi) )^2 / 2 --*/ 
-  /*--  compute [T1,T2] = (1 + a Eta) grad(Psi) --*/
-
-  for (i=0; i<N; i++){
-
-    Psi[i][0] = T3[i][0] - 0.5 * b * (T1[i][0]*T1[i][0] + T2[i][0]*T2[i][0]);
-    Psi[i][1] = 0;
-
-    T1[i][0]  = (1 + a * Eta[i][0]) * T1[i][0];
-    T1[i][1]  = 0;
-    
-    T2[i][0]  = (1 + a * Eta[i][0]) * T2[i][0];
-    T2[i][1]  = 0;
-  }
-
-  /*--  compute dEta = - div( (1 + a Eta) grad(Psi) )  --*/
-
-  
-  fft_deriv_x(T1, grid);
-  fft_deriv_y(T2, grid);
-
-  for (i=0; i<N; i++){
-
-    Eta[i][0] = - T1[i][0] - T2[i][0];
-    Eta[i][1] = 0;
-
-  }
-
-  
-}
-
-/* ---------------------------------------------------------------- */
