@@ -3,11 +3,11 @@
 static  int 		 myid, np;
 static  int 		 N0;
 
-static  fftw_complex  *Eta, *Psi;
+static  fftw_complex  *Psi;
 
 extern void   rhs_compute(int grid);    // Eta, Psi = RHS(Eta, Psi)
 extern void   rhs_init(geom_ptr geom, phys_ptr phys);
-extern void   rhs_init_S(fftw_complex *eta,  fftw_complex *psi);
+extern void   rhs_init_S(fftw_complex *psi);
 
 /* --------------------------------------------- */
 
@@ -86,34 +86,26 @@ int main(int argc, char **argv)
   Nx = N0*pow(2, geom.Ngrids-1);
   Ny = Nx/np;
 
-  Eta = (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
   Psi = (fftw_complex *) malloc( Nx*Ny * sizeof(fftw_complex));
 
   /* initialization */
 
   fft_init(&geom, work[0]);
   io_init(&ctrl, &geom);
-  ic_set(Eta, &geom, &ic);
+  ic_set(Psi, &geom, &ic);
 
   rhs_init(&geom, &phys);
-  rhs_init_S(Eta, Psi);
+  rhs_init_S(Psi);
 
 
 /* ------------------------------------------------- */
 
   /* field variable f(x,y) */
 
-  nio = io_save_data(Eta, grid);
-  if (myid==0)  printf("%4d:  capillary Eta\n", nio);
-
   nio = io_save_data(Psi, grid);
   if (myid==0)  printf("%4d:  capillary Psi\n", nio);
 
-
   rhs_compute(grid);
-
-  nio = io_save_data(Eta, grid);
-  if (myid==0)  printf("%4d:  capillary dEta/dt \n", nio);
 
   nio = io_save_data(Psi, grid);
   if (myid==0)  printf("%4d:  capillary dPsi/dt\n", nio);
