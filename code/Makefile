@@ -27,6 +27,13 @@ C_DSE     = main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.
             timers.c \
             arrays.c  collapse_one.c mask.c
 
+C_CAPILLARY= main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.c \
+            rk.c rhs_capillary.c dealias_rk.c \
+            infodat.c  diag_dse.c diag_spectrum.c \
+            timers.c \
+            arrays.c  collapse_one.c mask.c
+
+
 C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
             post_io.c post_param.c \
             post_blur.c post_bumps.c post_corrfun.c post_corrfunx.c \
@@ -35,7 +42,7 @@ C_NLSPOST = post.c grids.c fftw_wrap.c fft_extra.c corrfun.c \
 
 C_NLSTEST = test_deriv.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
 
-C_CAPILLARY = capillary.c rhs_capillary.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
+C_CAPTEST = capillary.c rhs_capillary.c grids.c fftw_wrap.c fft_extra.c arrays.c io.c ic.c timers.c
 
 
 # Compilers
