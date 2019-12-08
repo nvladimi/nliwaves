@@ -121,9 +121,6 @@ typedef struct
 } post_str, *post_ptr;
 
 
-
-
-
 /* arrays.c */
 
 extern void     arr2D_init(geom_ptr geom, int gp_in);
@@ -211,7 +208,17 @@ extern void    evolve_one_step(int grid, double dt);
 extern void    evolve_biglin(int grid, double dt);
 
 
-/* infodat.c */
+
+/* rhs_capillary.c  OR rhs_dse.c */
+
+extern void rhs_init(geom_ptr geom, phys_ptr phys);
+extern void rhs_init_S(fftw_complex *psi);
+extern void rhs_compute(int grid);
+extern void rhs_hamiltonian(int grid, double *Ek, double *Ep); 
+
+
+
+/* infodat.c OR infodat_capillary.c */
 
 extern void    info_init(ctrl_ptr ctrl, geom_ptr geom, diag_ptr diag,
 			 fftw_complex *psi, fftw_complex *psihat);
@@ -220,7 +227,7 @@ extern double  abspsi_max(int grid);
 extern double  Ekin(int grid);
 
 
-/* diag_nls.c  OR  diag_dse.c */
+/* diag_nls.c  OR  diag_dse.c or diag_capillary.c */
 
 extern  void   diag_init(ctrl_ptr ctrl, geom_ptr geom, diag_ptr diag,  phys_ptr phys,
 			fftw_complex *psi, fftw_complex *psihat);

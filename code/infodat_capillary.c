@@ -112,12 +112,11 @@ void info_output(int grid, double t)
 
   A       =  A * L*L/(N*N);
 
+  rhs_hamiltonian(grid, &Ek, &Ep);
+
+  Ek = Ek*L*L;
+  Ep = Ep*L*L;
   
-  /*-- output to file --*/
-
-  Ek = Ekin(grid);
-  Ep = 0;
-
   if (myid == 0) {
 
     thefile = fopen (filename, "a");
@@ -129,71 +128,6 @@ void info_output(int grid, double t)
 
   }
 
-
-
-}
-
-/*----------------------------------------------------------------*/
-
-double abspsi_max(int grid)
-{
-  int            i, n, N;
-  double         a, b, sq;
-  double         max=0;
-
-  N = N0*pow(2,grid);
-  n = N*N/np;
-
-  for (i=0; i<n; i++) {
-
-      a = data[i][0];
-      b = data[i][1];
-      sq = a*a + b*b;
-
-      if (sq>max) max=sq;
-  }
-
-  MPI_Reduce(&max, &sq, 1,  MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
-
-  return(sqrt(sq));
-
-}
-
-/*----------------------------------------------------------------*/
-
-double Ekin(int grid)
-{
-  double        c, u, v, s;
-  int           N, n, i, j, kx, ky;
-
-  N = N0*pow(2,grid);
-  n = N/np;
-
-  c = 4*pi*pi/(N*N);
-  s = 0;
-
-  for (j=0; j<n; j++) for (i=0; i<N; i++) {
-
-    kx = i;
-    ky = j + myid*n;
-
-    if (kx > N/2) kx = kx-N;
-    if (ky > N/2) ky = ky-N;
-
-    u = fdata[N*j+i][0];
-    v = fdata[N*j+i][1];
-
-    s += (u*u + v*v)*(kx*kx + ky*ky);
-
-  }
-
-  s = s*c;
-
-  MPI_Reduce(&s, &c,  1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
-  return(c);
-
 }
 
 /*-----------------------------------------------------------*/
-

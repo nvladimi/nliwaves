@@ -6,6 +6,7 @@ static  double         a, b;
 
 static  int N0;
 static  int np;
+static  int myid;
 
 /* ---------------------------------------------------------------- */
 
@@ -14,6 +15,7 @@ void rhs_init(geom_ptr geom, phys_ptr phys)
 
   int Ngrids, N;
 
+  MPI_Comm_rank(MPI_COMM_WORLD, &myid);
   MPI_Comm_size(MPI_COMM_WORLD, &np);
  
   Ngrids =  geom->Ngrids;
@@ -98,4 +100,64 @@ void rhs_compute(int grid)   // Eta, Psi = rhs(Eta, Psi)
   
 }
 
+
 /* ---------------------------------------------------------------- */
+void rhs_hamiltonian(int grid, double *Ek, double *Ep)
+{
+ 
+  int i, N, Ntot;
+  
+  double u,v;
+  double ekin = 0;
+  double epot = 0;
+
+  
+  N    = N0 * pow(2,grid);
+  Ntot = N*N;
+  N    = Ntot/np;
+
+  /*-- work arrays:   T1 = eta - i psi,  T2 = eta - i psi --*/
+
+  for (i=0; i<N; i++){
+    T1[i][0]  = Psi[i][0];
+    T1[i][1]  = Psi[1][1];
+    T2[i][0]  = Psi[i][0];
+    T2[i][1]  = Psi[1][1];
+  }
+
+  /*-- compute:   T1 = eta_x - i psi_x,  T2 = eta_y - i psi_y--*/
+  
+  fft_deriv_x(T1, grid);
+  fft_deriv_y(T2, grid);
+
+  
+ /*-- potential energy --*/
+
+  for (i=0; i<N; i++){
+    
+    u  = T1[i][0];
+    v  = T2[i][0];
+    epot += u*u +v*v;
+    
+    u  = T1[i][1];
+    v  = T2[i][1];
+    ekin += (u*u + v*v) * (1 + Psi[i][0]);
+
+  }
+
+  
+  /*-- global sums --*/
+
+  MPI_Reduce(&ekin,    &u,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&epot,    &v,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+  *Ek = 0.25*u/Ntot;
+  *Ep = 0.25*v/Ntot;
+
+}
+
+/* ---------------------------------------------------------------- */
+
+
+
+
