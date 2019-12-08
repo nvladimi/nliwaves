@@ -29,7 +29,7 @@ C_DSE     = main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.
 
 C_CAPILLARY= main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.c \
             rk.c rhs_capillary.c dealias_rk.c \
-            infodat.c  diag_dse.c diag_spectrum.c \
+            infodat_capillary.c  diag_capillary.c diag_spectrum.c \
             timers.c \
             arrays.c  collapse_one.c mask.c
 
