@@ -5,9 +5,6 @@ static  int 		 N0;
 
 static  fftw_complex  *Psi;
 
-extern void   rhs_compute(int grid);    // Eta, Psi = RHS(Eta, Psi)
-extern void   rhs_init(geom_ptr geom, phys_ptr phys);
-extern void   rhs_init_S(fftw_complex *psi);
 
 /* --------------------------------------------- */
 
@@ -94,7 +91,7 @@ int main(int argc, char **argv)
   io_init(&ctrl, &geom);
   ic_set(Psi, &geom, &ic);
 
-  rhs_init(&geom, &phys);
+  rhs_init(&geom, &phys, Psi);
   rhs_init_S(Psi);
 
 

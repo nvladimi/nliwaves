@@ -211,8 +211,8 @@ extern void    evolve_biglin(int grid, double dt);
 
 /* rhs_capillary.c  OR rhs_dse.c */
 
-extern void rhs_init(geom_ptr geom, phys_ptr phys);
-extern void rhs_init_S(fftw_complex *psi);
+extern void rhs_init(geom_ptr geom, phys_ptr phys, fftw_complex *Psi);
+extern void rhs_init_S(fftw_complex *Sin);
 extern void rhs_compute(int grid);
 extern void rhs_hamiltonian(int grid, double *Ek, double *Ep); 
 

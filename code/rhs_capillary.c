@@ -1,6 +1,6 @@
 #include "header.h"
 
-static  fftw_complex   *Psi, *T1, *T2, *T3;
+static  fftw_complex   *Psi, *S, *T1, *T2, *T3;
 
 static  double         a, b;
 
@@ -10,7 +10,7 @@ static  int myid;
 
 /* ---------------------------------------------------------------- */
 
-void rhs_init(geom_ptr geom, phys_ptr phys)
+void rhs_init(geom_ptr geom, phys_ptr phys,  fftw_complex *psi)
 {
 
   int Ngrids, N;
@@ -28,6 +28,8 @@ void rhs_init(geom_ptr geom, phys_ptr phys)
   T2 =  (fftw_complex *) malloc( N * sizeof(fftw_complex));
   T3 =  (fftw_complex *) malloc( N * sizeof(fftw_complex));
 
+  Psi = psi;
+  
   a = phys->coefA;
   b = phys->coefB;
 
@@ -36,10 +38,10 @@ void rhs_init(geom_ptr geom, phys_ptr phys)
 /* ---------------------------------------------------------------- */
 
 
-void rhs_init_S(fftw_complex *psi)
+void rhs_init_S(fftw_complex *Sin)
 {
 
-  Psi = psi;
+  S = Sin;
 
 }
 
@@ -57,11 +59,11 @@ void rhs_compute(int grid)   // Eta, Psi = rhs(Eta, Psi)
   /*-- work arrays:   T1 = v, T2 = v, T3 = u --*/
 
   for (i=0; i<N; i++){
-    T1[i][0]  = - Psi[i][1];
+    T1[i][0]  = - S[i][1];
     T1[i][1]  = 0;
-    T2[i][0]  = - Psi[i][1];
+    T2[i][0]  = - S[i][1];
     T2[i][1]  = 0;
-    T3[i][0]  = Psi[i][0];
+    T3[i][0]  = S[i][0];
     T3[i][1]  = 0;
   }
 
@@ -76,12 +78,12 @@ void rhs_compute(int grid)   // Eta, Psi = rhs(Eta, Psi)
 
   for (i=0; i<N; i++){
 
-    Psi[i][1] = - T3[i][0] + 0.5 * b * (T1[i][0]*T1[i][0] + T2[i][0]*T2[i][0]);
+    S[i][1] = - T3[i][0] + 0.5 * b * (T1[i][0]*T1[i][0] + T2[i][0]*T2[i][0]);
 
-    T1[i][0]  = (1 + a * Psi[i][0]) * T1[i][0];
+    T1[i][0]  = (1 + a * S[i][0]) * T1[i][0];
     T1[i][1]  = 0;
     
-    T2[i][0]  = (1 + a * Psi[i][0]) * T2[i][0];
+    T2[i][0]  = (1 + a * S[i][0]) * T2[i][0];
     T2[i][1]  = 0;
   }
 
@@ -93,7 +95,7 @@ void rhs_compute(int grid)   // Eta, Psi = rhs(Eta, Psi)
 
   for (i=0; i<N; i++){
 
-    Psi[i][0] = - T1[i][0] - T2[i][0];
+    S[i][0] = - T1[i][0] - T2[i][0];
 
   }
 

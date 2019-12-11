@@ -9,7 +9,7 @@ static  int np;
 
 /* ---------------------------------------------------------------- */
 
-void rhs_init(geom_ptr geom, phys_ptr phys)
+void rhs_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi)
 {
 
   int Ngrids, N;

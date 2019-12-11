@@ -7,7 +7,6 @@ extern void   dealias_init(geom_ptr geom, fftw_complex *psi, fftw_complex *psiha
 
 extern void   rk_one_step(int grid, double dt);          // Uo := Uo + dU
 extern void   rk_init(geom_ptr geom, fftw_complex *psi);
-extern void   rhs_init(geom_ptr geom, phys_ptr phys);
 
 /* ---------------------------------------------------------------- */
 
@@ -16,7 +15,7 @@ void evolve_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi, fftw_complex *
 
   rk_init(geom, psi);
 
-  rhs_init(geom, phys); 
+  rhs_init(geom, phys, psi); 
 
   dealias_init(geom, psi, psihat);
 
