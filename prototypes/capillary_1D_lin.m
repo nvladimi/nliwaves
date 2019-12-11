@@ -1,9 +1,9 @@
-function lin_profile
+function capillary_1D_lin
 %
 % Sinusoidal wave with binary output for 2D code.
 % 
 
-fbase = 'lin_A01_N256'
+fbase = 'lin'
 
 N = 256             % number of output points
 L = 4*pi            % domain size
@@ -16,7 +16,7 @@ iunit = i;
 
   x = (0:N-1)*L/N;
 
-  psi = 1 + A*cos(k*x) - iunit * A*sin(k*x);
+  psi = A*cos(k*x) - iunit * A*sin(k*x);
 
   plot(x,real(psi), x,imag(psi));  set(gca, "fontsize", 20);
 

@@ -42,8 +42,8 @@ void info_init(ctrl_ptr ctrl, geom_ptr geom, diag_ptr diag,
 
   if (myid == 0) {
     thefile = fopen (filename, "a");
-    fprintf(thefile,  "%%\n%% 1.time  2.eta_avg  3.psi_avg  4.N  5.E_kin");
-    fprintf(thefile,  "  6.E_pot  7.No   8.A\n%%\n");
+    fprintf(thefile,  "%%\n%% 1.time  2.eta_avg  3.psi_avg  4.sumA_sq ");
+    fprintf(thefile,  " 5.E_kin  6.E_pot  7.sumAk_sq  8.eta_max \n%%\n");
     fclose(thefile); 
   }
 }
@@ -56,7 +56,7 @@ void info_output(int grid, double t)
   FILE          *thefile;
 
   double         psi, psisq;
-  double         No, vortices, Ek, Ep, A;
+  double         Ek, Ep, A;
   double         u, v, sq, max;
 
   double         sumu     = 0;
@@ -74,15 +74,15 @@ void info_output(int grid, double t)
 
   for (i=0; i<n; i++) {
 
-      u = data[i][0];
-      v = data[i][1];
+      u =  data[i][0];
+      v = -data[i][1];
       sq = u*u + v*v;
 
       sumu    += u;
       sumv    += v;
       sumsq   += sq;
  
-      if (sq>mx) mx=sq;
+      if (fabs(u)>mx) mx=fabs(u);
 
 
       u = fdata[i][0];
@@ -92,7 +92,6 @@ void info_output(int grid, double t)
       
   }
 
-  mx = sqrt(mx);
 
   /*-- global sums --*/
 
@@ -108,7 +107,6 @@ void info_output(int grid, double t)
   psisq   =  psisq * L*L/(N*N);
   u       =  u / (N*N);
   v       =  v / (N*N);
-  No      =  u*u+v*v;
 
   A       =  A * L*L/(N*N);
 
@@ -120,10 +118,10 @@ void info_output(int grid, double t)
   if (myid == 0) {
 
     thefile = fopen (filename, "a");
-    fprintf(thefile, "%18.12e  %18.12e  %18.12e  %18.12e  ", 
+    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e ", 
 	    t, u, v, psisq);  
-    fprintf(thefile, "%18.12e  %18.12e  %18.12e  %18.12e\n", 
-	    Ek, Ep, No, A);  
+    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e\n", 
+	    Ek, Ep, A, max);  
     fclose(thefile); 
 
   }

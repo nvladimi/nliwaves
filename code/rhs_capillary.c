@@ -120,9 +120,9 @@ void rhs_hamiltonian(int grid, double *Ek, double *Ep)
 
   for (i=0; i<N; i++){
     T1[i][0]  = Psi[i][0];
-    T1[i][1]  = Psi[1][1];
+    T1[i][1]  = Psi[i][1];
     T2[i][0]  = Psi[i][0];
-    T2[i][1]  = Psi[1][1];
+    T2[i][1]  = Psi[i][1];
   }
 
   /*-- compute:   T1 = eta_x - i psi_x,  T2 = eta_y - i psi_y--*/
@@ -151,8 +151,8 @@ void rhs_hamiltonian(int grid, double *Ek, double *Ep)
   MPI_Reduce(&ekin,    &u,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&epot,    &v,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-  *Ek = 0.25*u/Ntot;
-  *Ep = 0.25*v/Ntot;
+  *Ek = 0.5*u/Ntot;
+  *Ep = 0.5*v/Ntot;
 
 }
 
