@@ -146,7 +146,9 @@ void ic_parameters(int *argc, char ***argv,
  
     if (geom->Lx < 0) geom->Lx = -pi*geom->Lx;
     if (geom->Ly < 0) geom->Ly = -pi*geom->Ly;
-
+    if (ic->BumpX < 0) ic->BumpX = -pi*ic->BumpX;
+    if (ic->BumpY < 0) ic->BumpY = -pi*ic->BumpY;
+ 
     ic_header(geom, ctrl, ic);
 
 

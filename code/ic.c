@@ -11,6 +11,7 @@ static int     nx, ny, gp, grid;
 static int     myid, np;
 
 void Tophat(fftw_complex **A, double x, double y, double r, double h);
+void Mexhat(fftw_complex **A, double x, double y, double r, double h);
 void Vortex(fftw_complex **A, double x, double y, double r, double h);
 void Gauss(fftw_complex **A, double x, double y, double r, double h, double phase);
 void superGauss(fftw_complex **A, double x, double y, double r, double h, double p, double phase);
@@ -70,6 +71,10 @@ void ic_set(fftw_complex *psi, geom_ptr geom, ic_ptr ic)
   if( strcmp(ic->type,"tophat") == 0 )
 
     Tophat(A, ic->BumpX, ic->BumpY, ic->BumpRadius, ic->BumpHeight);
+
+  else if( strcmp(ic->type,"mexhat") == 0 )
+
+    Mexhat(A, ic->BumpX, ic->BumpY, ic->BumpRadius, ic->BumpHeight);
 
   else if( strcmp(ic->type,"gauss") == 0 )
 
@@ -204,6 +209,40 @@ void superGauss(fftw_complex **A, double x0, double y0, double r, double h, doub
     a = exp ( -pow( rr/rr0, 0.5*p) ); 
     A[j][i][0] += h*a*cos_ph;
     A[j][i][1] += h*a*sin_ph;
+
+  }
+
+}
+
+
+/*-----------------------------------------------------------*/
+
+void Mexhat(fftw_complex **A, double x0, double y0, double r, double h)
+{
+  int i, j;
+  double x,y, rr, rr0;
+  double rx, ry, lx, ly;
+  double offset = 0;        /* 0.5 for cell-center */
+
+  if (r<=0) return;
+
+  rr0 = r*r;
+
+  for (j=0; j<ny+gp; j++) for (i=0; i<nx+gp; i++) {
+
+    x = (i - gp + offset)*dx;
+    y = (myid*ny + j - gp + offset)*dx;
+
+    rx = fabs(x-x0);
+    ry = fabs(y-y0);
+
+    if (rx > 0.5*Lx) rx = Lx-rx;  
+    if (ry > 0.5*Ly) ry = Ly-ry;  
+
+    rr = (rx*rx + ry*ry)/rr0;
+    
+    A[j][i][0] = h * (1-rr) * exp(-rr);
+    A[j][i][1] = 0;
 
   }
 
