@@ -1,5 +1,11 @@
 #include "header.h"
 
+/* Note: sumA_sq  = (1/2) int( eta^2 + psi^2 ) dxdy                    */
+/* Note: sumAk_sq = sum(|Ak|^2) = (2/L^2) sumA_sq                      */
+/* Note: Spectrum computes average of |Ak|^2 in rings                  */
+/* Note: H = (1/2) int( |\nabla eta|^2 + (1+eta) |nabla psi|^2 ) dxdy  */ 
+
+
 static  int 		 myid, np;
 static  int 		 N0;
 static  double           L;
@@ -11,8 +17,6 @@ static  fftw_complex    *fdata;
 static  char             filename[80];
 static  char             msg[80];
 
-
-double astigmatism(int grid);
 
 /*----------------------------------------------------------------*/
 
@@ -56,7 +60,7 @@ void info_output(int grid, double t)
   FILE          *thefile;
 
   double         psi, psisq;
-  double         Ek, Ep, A;
+  double         Ek, Ep, A, Ak;
   double         u, v, sq, max;
 
   double         sumu     = 0;
@@ -98,18 +102,18 @@ void info_output(int grid, double t)
   MPI_Reduce(&sumu,    &u,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&sumv,    &v,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&sumsq,   &psisq,   1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-  MPI_Reduce(&sumAk,   &A,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&sumAk,   &Ak,      1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Allreduce(&mx,   &max,     1,  MPI_DOUBLE, MPI_MAX,    MPI_COMM_WORLD);
 
 
   /*-- rescale to represent total or average quantities --*/
 
-  psisq   =  psisq * L*L/(N*N);
-  u       =  u / (N*N);
-  v       =  v / (N*N);
+  A    =  psisq * L*L/(N*N) * 0.5;  // =  Ak * L*L * 0.5;
+  u    =  u / (N*N);
+  v    =  v / (N*N);
 
-  A       =  A * L*L/(N*N);
-
+  Ak   =  Ak/(N*N); 
+  
   rhs_hamiltonian(grid, &Ek, &Ep);
 
   Ek = Ek*L*L;
@@ -119,9 +123,9 @@ void info_output(int grid, double t)
 
     thefile = fopen (filename, "a");
     fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e ", 
-	    t, u, v, psisq);  
+	    t, u, v, A);  
     fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e\n", 
-	    Ek, Ep, A, max);  
+	    Ek, Ep, Ak, max);  
     fclose(thefile); 
 
   }
