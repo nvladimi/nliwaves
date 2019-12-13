@@ -79,7 +79,7 @@ void info_output(int grid, double t)
   for (i=0; i<n; i++) {
 
       u =  data[i][0];
-      v = -data[i][1];
+      v =  data[i][1];
       sq = u*u + v*v;
 
       sumu    += u;

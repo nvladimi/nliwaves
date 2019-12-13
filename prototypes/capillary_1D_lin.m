@@ -16,7 +16,7 @@ iunit = i;
 
   x = (0:N-1)*L/N;
 
-  psi = A*cos(k*x) - iunit * A*sin(k*x);
+  psi = A*cos(k*x) + iunit * A*sin(k*x);
 
   plot(x,real(psi), x,imag(psi));  set(gca, "fontsize", 20);
 

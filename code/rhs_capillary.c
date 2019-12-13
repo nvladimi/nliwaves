@@ -48,7 +48,10 @@ void rhs_init_S(fftw_complex *Sin)
 
 
 /* ---------------------------------------------------------------- */
-void rhs_compute(int grid)   // Eta, Psi = rhs(Eta, Psi) 
+/* RHS is computed in place: array S holds                          */          
+/* (Eta, Psi) on input and (dEta/dt, dPsi/dt) on output             */
+
+void rhs_compute(int grid)
 {
 
   int i, N;
@@ -56,29 +59,29 @@ void rhs_compute(int grid)   // Eta, Psi = rhs(Eta, Psi)
   N = N0 * pow(2,grid);
   N = N*N/np;
 
-  /*-- work arrays:   T1 = v, T2 = v, T3 = u --*/
+  /*-- work arrays:   T1 = psi,  T2 = psi,  T3 = eta --*/
 
   for (i=0; i<N; i++){
-    T1[i][0]  = - S[i][1];
+    T1[i][0]  = S[i][1];
     T1[i][1]  = 0;
-    T2[i][0]  = - S[i][1];
+    T2[i][0]  = S[i][1];
     T2[i][1]  = 0;
     T3[i][0]  = S[i][0];
     T3[i][1]  = 0;
   }
 
-  /*-- compute:   T1 = v_x,  T2 = v_y,  T3 = laplacian(u) --*/
+  /*-- compute:   T1 = psi_x,  T2 = psi_y,  T3 = laplacian(eta) --*/
   
   fft_deriv_x(T1, grid);
   fft_deriv_y(T2, grid);
   fft_laplacian(T3, grid);
 
-  /*--  compute dv = laplacian(u) - b ( grad(v) )^2 / 2 --*/ 
-  /*--  compute [T1,T2] = (1 + a u) grad(v) --*/
+  /*--  compute dPsi = laplacian(eta) - (b/2) ( grad(psi) )^2 --*/ 
+  /*--  compute [T1,T2] = (1 + a eta) grad(psi) --*/
 
   for (i=0; i<N; i++){
 
-    S[i][1] = - T3[i][0] + 0.5 * b * (T1[i][0]*T1[i][0] + T2[i][0]*T2[i][0]);
+    S[i][1] = T3[i][0] - 0.5 * b * (T1[i][0]*T1[i][0] + T2[i][0]*T2[i][0]);
 
     T1[i][0]  = (1 + a * S[i][0]) * T1[i][0];
     T1[i][1]  = 0;
@@ -87,7 +90,7 @@ void rhs_compute(int grid)   // Eta, Psi = rhs(Eta, Psi)
     T2[i][1]  = 0;
   }
 
-  /*--  compute du = - div( (1 + a u) grad(v) )  --*/
+  /*--  compute dEta = - div( (1 + a eta) grad(psi) )  --*/
 
   
   fft_deriv_x(T1, grid);
@@ -118,7 +121,7 @@ void rhs_hamiltonian(int grid, double *Ek, double *Ep)
   Ntot = N*N;
   N    = Ntot/np;
 
-  /*-- work arrays:   T1 = eta - i psi,  T2 = eta - i psi --*/
+  /*-- work arrays:   T1 = eta + i psi,  T2 = eta + i psi --*/
 
   for (i=0; i<N; i++){
     T1[i][0]  = Psi[i][0];
@@ -127,7 +130,7 @@ void rhs_hamiltonian(int grid, double *Ek, double *Ep)
     T2[i][1]  = Psi[i][1];
   }
 
-  /*-- compute:   T1 = eta_x - i psi_x,  T2 = eta_y - i psi_y--*/
+  /*-- compute:   T1 = eta_x + i psi_x,  T2 = eta_y + i psi_y--*/
   
   fft_deriv_x(T1, grid);
   fft_deriv_y(T2, grid);
