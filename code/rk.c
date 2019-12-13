@@ -3,9 +3,6 @@
 
 static  fftw_complex  *Psi, *S, *S0;
 
-extern void   rhs_compute(int grid);
-extern void   rhs_init_S(fftw_complex *s);
-
 static void   rk_zero_out(int N);
 static void   rk_add_slope(int N, int w);
 static void   rk_part_step(int N, double dt);

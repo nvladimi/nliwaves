@@ -2,12 +2,6 @@
 
 static  int   tmrRK;
 
-extern void   dealias(int grid);
-extern void   dealias_init(geom_ptr geom, fftw_complex *psi, fftw_complex *psihat);
-
-extern void   rk_one_step(int grid, double dt);          // Uo := Uo + dU
-extern void   rk_init(geom_ptr geom, fftw_complex *psi);
-
 /* ---------------------------------------------------------------- */
 
 void evolve_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi, fftw_complex *psihat)

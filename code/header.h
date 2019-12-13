@@ -208,6 +208,18 @@ extern void    evolve_one_step(int grid, double dt);
 extern void    evolve_biglin(int grid, double dt);
 
 
+/* rk.s */
+
+extern void    rk_init(geom_ptr geom, fftw_complex *psi);
+extern void    rk_one_step(int grid, double dt);
+
+
+/* dealias_rk */
+
+extern void dealias_init(geom_ptr geom, fftw_complex *psi, fftw_complex *psihat);
+extern void dealias(int grid);
+
+
 
 /* rhs_capillary.c  OR rhs_dse.c */
 
@@ -215,7 +227,6 @@ extern void rhs_init(geom_ptr geom, phys_ptr phys, fftw_complex *Psi);
 extern void rhs_init_S(fftw_complex *Sin);
 extern void rhs_compute(int grid);
 extern void rhs_hamiltonian(int grid, double *Ek, double *Ep); 
-
 
 
 /* infodat.c OR infodat_capillary.c */
