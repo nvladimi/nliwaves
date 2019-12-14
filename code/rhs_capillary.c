@@ -107,14 +107,15 @@ void rhs_compute(int grid)
 
 
 /* ---------------------------------------------------------------- */
-void rhs_hamiltonian(int grid, double *Ek, double *Ep)
+void rhs_hamiltonian(int grid, double *Ep, double *Ek, double *Enl )
 {
  
   int i, N, Ntot;
   
-  double u,v;
+  double u,v,w;
   double ekin = 0;
   double epot = 0;
+  double enl  = 0;
 
   
   N    = N0 * pow(2,grid);
@@ -136,7 +137,7 @@ void rhs_hamiltonian(int grid, double *Ek, double *Ep)
   fft_deriv_y(T2, grid);
 
   
- /*-- potential energy --*/
+ /*-- compute all terms in Hamiltonian --*/
 
   for (i=0; i<N; i++){
     
@@ -146,7 +147,10 @@ void rhs_hamiltonian(int grid, double *Ek, double *Ep)
     
     u  = T1[i][1];
     v  = T2[i][1];
-    ekin += (u*u + v*v) * (1 + Psi[i][0]);
+    w  = u*u + v*v;
+
+    ekin += w;
+    enl  += w * Psi[i][0];
 
   }
 
@@ -155,9 +159,11 @@ void rhs_hamiltonian(int grid, double *Ek, double *Ep)
 
   MPI_Reduce(&ekin,    &u,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&epot,    &v,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&enl,     &w,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-  *Ek = 0.5*u/Ntot;
-  *Ep = 0.5*v/Ntot;
+  *Ek  = 0.5*u/Ntot;
+  *Ep  = 0.5*v/Ntot;
+  *Enl = 0.5*w/Ntot;
 
 }
 

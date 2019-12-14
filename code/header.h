@@ -226,7 +226,7 @@ extern void dealias(int grid);
 extern void rhs_init(geom_ptr geom, phys_ptr phys, fftw_complex *Psi);
 extern void rhs_init_S(fftw_complex *Sin);
 extern void rhs_compute(int grid);
-extern void rhs_hamiltonian(int grid, double *Ek, double *Ep); 
+extern void rhs_hamiltonian(int grid, double *Ep, double *Ek,  double *Enl); 
 
 
 /* infodat.c OR infodat_capillary.c */

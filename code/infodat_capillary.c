@@ -46,8 +46,8 @@ void info_init(ctrl_ptr ctrl, geom_ptr geom, diag_ptr diag,
 
   if (myid == 0) {
     thefile = fopen (filename, "a");
-    fprintf(thefile,  "%%\n%% 1.time  2.eta_avg  3.psi_avg  4.sumA_sq ");
-    fprintf(thefile,  " 5.E_kin  6.E_pot  7.sumAk_sq  8.eta_max \n%%\n");
+    fprintf(thefile,  "%%\n%% 1.time  2.E_pot  3.E_kin  4.E_nl  ");
+    fprintf(thefile,  "5.eta_max  6.eta_avg  7.psi_avg  8.sumA_sq  9.sumAk_sq\n%%\n");
     fclose(thefile); 
   }
 }
@@ -60,7 +60,7 @@ void info_output(int grid, double t)
   FILE          *thefile;
 
   double         psi, psisq;
-  double         Ek, Ep, A, Ak;
+  double         Ek, Ep, Enl, A, Ak;
   double         u, v, sq, max;
 
   double         sumu     = 0;
@@ -114,18 +114,19 @@ void info_output(int grid, double t)
 
   Ak   =  Ak/(N*N); 
   
-  rhs_hamiltonian(grid, &Ek, &Ep);
+  rhs_hamiltonian(grid, &Ep, &Ek, &Enl);
 
-  Ek = Ek*L*L;
-  Ep = Ep*L*L;
+  Ek  = Ek*L*L;
+  Ep  = Ep*L*L;
+  Enl = Enl*L*L;
   
   if (myid == 0) {
 
     thefile = fopen (filename, "a");
     fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e ", 
-	    t, u, v, A);  
-    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e\n", 
-	    Ek, Ep, Ak, max);  
+	    t, Ep, Ek, Enl);  
+    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e %19.12e\n", 
+	    max, u,v, A, Ak);  
     fclose(thefile); 
 
   }
