@@ -145,8 +145,8 @@ endif
 
 ifeq ($(HOSTNAME), comet-ln2.sdsc.edu)
          #LIB_MPI =
-         INC_FFT = -I/opt/fftw/3.3.4/intel/mvapich2_ib/include
-         LIB_FFT = -L/opt/fftw/3.3.4/intel/mvapich2_ib/lib  -lfftw3_mpi -lfftw3
+         INC_FFT = -I/opt/fftw/3.3.8/intel/mvapich2_ib/include
+         LIB_FFT = -L/opt/fftw/3.3.8/intel/mvapich2_ib/lib  -lfftw3_mpi -lfftw3
 endif
 
 
