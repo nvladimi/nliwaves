@@ -10,6 +10,9 @@ static  double           *filter;
 static  int 		 np, myid;
 static  int 		 N0;
 
+
+static void dealias(int grid);
+
 /* ---------------------------------------------------------------- */
 
 
@@ -44,10 +47,23 @@ void forcing_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi, fftw_complex 
 }
 
 
-
 /* ---------------------------------------------------------------- */
 
 void forcing(int grid){
+
+
+  fft_wrap(Psi, grid, FORWARD);
+
+  dealias(grid);
+
+  fft_save_fourier(Psi, PsiHat, grid);
+  fft_wrap(Psi, grid, BACKWARD);
+   
+}
+
+/* ---------------------------------------------------------------- */
+
+void dealias(int grid){
 
   int            N, n, i, j, kx, ky, dkx, dky;
   int            kmin, kmax;
@@ -63,9 +79,7 @@ void forcing(int grid){
 
 
   n = N/np;
- 
-  fft_wrap(Psi, grid, FORWARD);
- 
+  
   for (j=0; j<n; j++) for (i=0; i<N; i++) {
 
     kx = i;
@@ -103,13 +117,6 @@ void forcing(int grid){
     Psi[N*j+i][1] = psi[1];
 
   }
-
-  /*-- save a copy of psihat to work array --*/
-
-  fft_save_fourier(Psi, PsiHat, grid);
-
-  fft_wrap(Psi, grid, BACKWARD);
-
 
 }
 
