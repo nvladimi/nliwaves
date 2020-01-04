@@ -217,7 +217,7 @@ extern void    rk_one_step(int grid, double dt);
 /* forcing_rk */
 
 extern void forcing_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi, fftw_complex *psihat);
-extern void forcing(int grid);
+extern void forcing(int grid, double dt);
 
 
 

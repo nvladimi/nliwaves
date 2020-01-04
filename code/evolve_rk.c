@@ -26,7 +26,7 @@ void evolve_one_step(int grid, double dt)   // Uo := Uo + dU
 
   rk_one_step(grid, dt);
   
-  forcing(grid);
+  forcing(grid, dt);
 
   timer_off(tmrRK);
 
