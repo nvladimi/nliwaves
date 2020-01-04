@@ -11,7 +11,7 @@ void evolve_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi, fftw_complex *
 
   rhs_init(geom, phys, psi); 
 
-  dealias_init(geom, psi, psihat);
+  forcing_init(geom, phys, psi, psihat);
 
   tmrRK    = timer_set("RK4");
  
@@ -26,7 +26,7 @@ void evolve_one_step(int grid, double dt)   // Uo := Uo + dU
 
   rk_one_step(grid, dt);
   
-  dealias(grid);
+  forcing(grid);
 
   timer_off(tmrRK);
 
