@@ -143,7 +143,25 @@ ifeq ($(HOSTNAME), stampede)
 endif
 
 
+ifeq ($(HOSTNAME), comet-ln1.sdsc.edu)
+         #LIB_MPI =
+         INC_FFT = -I/opt/fftw/3.3.8/intel/mvapich2_ib/include
+         LIB_FFT = -L/opt/fftw/3.3.8/intel/mvapich2_ib/lib  -lfftw3_mpi -lfftw3
+endif
+
 ifeq ($(HOSTNAME), comet-ln2.sdsc.edu)
+         #LIB_MPI =
+         INC_FFT = -I/opt/fftw/3.3.8/intel/mvapich2_ib/include
+         LIB_FFT = -L/opt/fftw/3.3.8/intel/mvapich2_ib/lib  -lfftw3_mpi -lfftw3
+endif
+
+ifeq ($(HOSTNAME), comet-ln3.sdsc.edu)
+         #LIB_MPI =
+         INC_FFT = -I/opt/fftw/3.3.8/intel/mvapich2_ib/include
+         LIB_FFT = -L/opt/fftw/3.3.8/intel/mvapich2_ib/lib  -lfftw3_mpi -lfftw3
+endif
+
+ifeq ($(HOSTNAME), comet-ln4.sdsc.edu)
          #LIB_MPI =
          INC_FFT = -I/opt/fftw/3.3.8/intel/mvapich2_ib/include
          LIB_FFT = -L/opt/fftw/3.3.8/intel/mvapich2_ib/lib  -lfftw3_mpi -lfftw3
