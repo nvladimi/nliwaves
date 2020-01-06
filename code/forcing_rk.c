@@ -10,12 +10,13 @@ static  double           *filter;
 static  int 		 np, myid;
 static  int 		 N0;
 
-static  int              isforcing;
+static  char             f_type[32];
 static  double           f_alpha, f_kmin, f_kmax;
 
 
 static void dealias(int grid);
 static void force_mult(int grid, double dt);
+static void force_add(int grid, double dt);
 
 /* ---------------------------------------------------------------- */
 
@@ -47,19 +48,16 @@ void forcing_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi, fftw_complex 
     filter[i] = x*x*(3-2*x);
   }
 
-  /*--- set up dealising forcing ---*/
+  /*--- set up forcing ---*/
 
-  if( strcmp(phys->f_type, "mult_loK") == 0 ) {
-
+    strcpy(f_type, phys->f_type);
+     
     f_alpha = phys->f_alpha;
     f_kmin  = phys->f_kmin;
-    f_kmax  = phys->f_kmax;
+    f_kmax  = phys->f_kmax; 
 
-    isforcing = 1;
+    srand48(myid);
 
-  } else isforcing = 0;
-  
- 
 }
 
 
@@ -70,7 +68,8 @@ void forcing(int grid, double dt){
 
   fft_wrap(Psi, grid, FORWARD);
 
-  if (isforcing) force_mult(grid, dt);
+  if ( strcmp(f_type, "mult_loK") == 0) force_mult(grid, dt);
+  if ( strcmp(f_type, "add_loK") == 0)  force_add(grid, dt);
   
   dealias(grid);
  
@@ -171,6 +170,46 @@ void force_mult(int grid, double dt){
     else if (kk < kkmax){
       Psi[N*j+i][0] = Psi[N*j+i][0] * amp;
       Psi[N*j+i][1] = Psi[N*j+i][1] * amp;
+    }
+
+  }
+
+}
+/* ---------------------------------------------------------------- */
+
+void force_add(int grid, double dt){
+
+  int            N, n, i, j, kx, ky, kk, kkmax, kkmin;
+  double         amp, a0, a1;
+  
+  N = N0 * pow(2,grid);
+
+  n = N/np;
+
+  kkmax = f_kmax * f_kmax;
+  kkmin = f_kmin * f_kmin;
+
+  amp = f_alpha * N * sqrt(dt);
+
+  for (j=0; j<n; j++) for (i=0; i<N; i++) {
+
+    kx = i;
+    ky = j + myid*n;
+
+    if (kx > N/2) kx = kx-N;
+    if (ky > N/2) ky = ky-N;
+
+    kk = kx*kx + ky*ky;
+
+    if (kk == 0){
+        Psi[N*j+i][0] = 0;
+        Psi[N*j+i][1] = 0;
+    }
+    else if (kk < kkmax){
+      a0 = 2*drand48() - 1;
+      a1 = 2*drand48() - 1;
+      Psi[N*j+i][0] = Psi[N*j+i][0] + a0*amp/kk;
+      Psi[N*j+i][1] = Psi[N*j+i][1] + a1*amp/kk;
     }
 
   }
