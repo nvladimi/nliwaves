@@ -43,7 +43,7 @@ void diag_compute(fftw_complex *psi, fftw_complex *psihat, int grid){
   spectrum_compute(grid);
   //qflux_compute(grid);
   //io_save_sieve(psi, grid);
-  //io_save_klow(psihat, grid);
+  io_save_klow(psihat, grid);
 
 }
 
