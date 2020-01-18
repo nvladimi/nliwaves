@@ -47,7 +47,7 @@ void info_init(ctrl_ptr ctrl, geom_ptr geom, diag_ptr diag,
   if (myid == 0) {
     thefile = fopen (filename, "a");
     fprintf(thefile,  "%%\n%% 1.time  2.E_pot  3.E_kin  4.E_nl  ");
-    fprintf(thefile,  "5.eta_max  6.eta_avg  7.psi_avg  8.sumA_sq  9.sumAk_sq\n%%\n");
+    fprintf(thefile,  "5.eta_rms  6.eta_min  7.eta_max  8.sumA_sq  9.sumAk_sq\n%%\n");
     fclose(thefile); 
   }
 }
@@ -59,14 +59,16 @@ void info_output(int grid, double t)
 {
   FILE          *thefile;
 
-  double         psi, psisq;
+  double         psi, psisq, urms;
   double         Ek, Ep, Enl, A, Ak;
-  double         u, v, sq, max;
+  double         u, v, max, min;
 
   double         sumu     = 0;
   double         sumv     = 0;
   double         mx       = 0;
+  double         mn       = 0;
   double         sumsq    = 0;
+  double         sumusq   = 0;
   double         sumAk    = 0;
   
   int            i, n, nv, N;
@@ -80,13 +82,14 @@ void info_output(int grid, double t)
 
       u =  data[i][0];
       v =  data[i][1];
-      sq = u*u + v*v;
 
       sumu    += u;
       sumv    += v;
-      sumsq   += sq;
- 
-      if (fabs(u)>mx) mx=fabs(u);
+      sumusq  += u*u;
+      sumsq   += u*u + v*v;
+
+      if (u > mx) mx = u;
+      if (u < mn) mn = u;
 
 
       u = fdata[i][0];
@@ -102,8 +105,10 @@ void info_output(int grid, double t)
   MPI_Reduce(&sumu,    &u,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&sumv,    &v,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&sumsq,   &psisq,   1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&sumusq,  &urms,    1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&sumAk,   &Ak,      1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Allreduce(&mx,   &max,     1,  MPI_DOUBLE, MPI_MAX,    MPI_COMM_WORLD);
+  MPI_Allreduce(&mn,   &min,     1,  MPI_DOUBLE, MPI_MIN,    MPI_COMM_WORLD);
 
 
   /*-- rescale to represent total or average quantities --*/
@@ -111,6 +116,7 @@ void info_output(int grid, double t)
   A    =  psisq * L*L/(N*N) * 0.5;  // =  Ak * L*L * 0.5;
   u    =  u / (N*N);
   v    =  v / (N*N);
+  urms =  sqrt(urms / (N*N));
 
   Ak   =  Ak/(N*N); 
   
@@ -126,7 +132,7 @@ void info_output(int grid, double t)
     fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e ", 
 	    t, Ep, Ek, Enl);  
     fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e %19.12e\n", 
-	    max, u,v, A, Ak);  
+	    urms, min, max, A, Ak);  
     fclose(thefile); 
 
   }
