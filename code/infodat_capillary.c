@@ -17,6 +17,7 @@ static  fftw_complex    *fdata;
 static  char             filename[80];
 static  char             msg[80];
 
+static  void momentum(int grid, double *Nk, double *Px, double *Py);
 
 /*----------------------------------------------------------------*/
 
@@ -47,7 +48,8 @@ void info_init(ctrl_ptr ctrl, geom_ptr geom, diag_ptr diag,
   if (myid == 0) {
     thefile = fopen (filename, "a");
     fprintf(thefile,  "%%\n%% 1.time  2.E_pot  3.E_kin  4.E_nl  ");
-    fprintf(thefile,  "5.eta_rms  6.eta_min  7.eta_max  8.sumA_sq  9.sumAk_sq\n%%\n");
+    fprintf(thefile,  "5.eta_rms  6.eta_min  7.eta_max  8.sumA_sq  ");
+    fprintf(thefile,  "9.sumAk_sq  10.Px  11.Py \n%%\n");
     fclose(thefile); 
   }
 }
@@ -60,7 +62,7 @@ void info_output(int grid, double t)
   FILE          *thefile;
 
   double         psi, psisq, urms;
-  double         Ek, Ep, Enl, A, Ak;
+  double         Ek, Ep, Enl, A, Ak, px, py;
   double         u, v, max, min;
 
   double         sumu     = 0;
@@ -90,12 +92,6 @@ void info_output(int grid, double t)
 
       if (u > mx) mx = u;
       if (u < mn) mn = u;
-
-
-      u = fdata[i][0];
-      v = fdata[i][1];
- 
-      sumAk += u*u + v*v;
       
   }
 
@@ -106,36 +102,89 @@ void info_output(int grid, double t)
   MPI_Reduce(&sumv,    &v,       1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&sumsq,   &psisq,   1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(&sumusq,  &urms,    1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-  MPI_Reduce(&sumAk,   &Ak,      1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Allreduce(&mx,   &max,     1,  MPI_DOUBLE, MPI_MAX,    MPI_COMM_WORLD);
   MPI_Allreduce(&mn,   &min,     1,  MPI_DOUBLE, MPI_MIN,    MPI_COMM_WORLD);
 
 
   /*-- rescale to represent total or average quantities --*/
 
-  A    =  psisq * L*L/(N*N) * 0.5;  // =  Ak * L*L * 0.5;
+  A    =  psisq / (N*N) * L*L* 0.5;  // =  Ak * L*L/2;
   u    =  u / (N*N);
   v    =  v / (N*N);
   urms =  sqrt(urms / (N*N));
 
-  Ak   =  Ak/(N*N); 
   
   rhs_hamiltonian(grid, &Ep, &Ek, &Enl);
 
   Ek  = Ek*L*L;
   Ep  = Ep*L*L;
   Enl = Enl*L*L;
+
+  momentum(grid, &Ak, &px, &py);
+
+  px = px * (2*pi/L);
+  py = py * (2*pi/L);
   
   if (myid == 0) {
 
     thefile = fopen (filename, "a");
-    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e ", 
-	    t, Ep, Ek, Enl);  
-    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e %19.12e\n", 
-	    urms, min, max, A, Ak);  
+    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e ",  t, Ep, Ek, Enl);  
+    fprintf(thefile, "%19.12e %19.12e %19.12e %19.12e ", urms, min, max, A);  
+    fprintf(thefile, "%19.12e %19.12e %19.12e\n", Ak, px, py);  
     fclose(thefile); 
 
   }
+
+}
+
+/*-----------------------------------------------------------*/
+
+void momentum(int grid, double *Nk, double *Px, double *Py){
+
+  double        a, b, c, sumnk, sumpx, sumpy, nk, px, py;
+  int           N, n, i, j, kx, ky;
+ 
+  N = N0*pow(2,grid);
+
+  n = N/np;
+
+  sumpx = 0;
+  sumpy = 0;
+  sumnk = 0;
+  
+  /*-- sum over domain --*/
+  for (j=0; j<n; j++) for (i=0; i<N; i++) {
+
+    kx = i;
+    ky = j + myid*n;
+
+    if (kx > N/2) kx = kx-N;
+    if (ky > N/2) ky = ky-N;
+
+    a = fdata[N*j+i][0];
+    b = fdata[N*j+i][1];
+
+    nk = a*a + b*b;
+
+    sumpx += nk*kx;
+    sumpy += nk*ky;
+
+    sumnk += nk;
+    
+  }
+
+
+  /*-- global sums --*/
+
+  MPI_Reduce(&sumnk,   &nk,      1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&sumpx,   &px,      1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&sumpy,   &py,      1,  MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+  c =  1.0 /(N*N);
+  
+  *Nk   =  nk * c; 
+  *Px   =  px * c; 
+  *Py   =  py * c; 
 
 }
 
