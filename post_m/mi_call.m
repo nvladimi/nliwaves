@@ -1,8 +1,8 @@
 #!/opt/octave/bin/octave -qf
 
-fbase ='a5';
+fbase ='../test/a5';
 
-fbaseout = 'a5_m06m12_test01';
+fbaseout = '../test/test02';
 
 m1 = 6;
 m2 = 12;
@@ -19,6 +19,6 @@ N0        =  256;            % total number of modes
 
 %--------------------------------
 
-mi_wrap(fbase, fbaseout, fnums, N, N0, ndiag, amp0, nAmp, nPhi, m1, m2);
+mi_core(fbase, fbaseout, fnums, N, N0, ndiag, amp0, nAmp, nPhi, m1, m2);
 
 %--------------------------------
