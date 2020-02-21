@@ -56,7 +56,7 @@ void forcing_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi, fftw_complex 
     f_kmin  = phys->f_kmin;
     f_kmax  = phys->f_kmax; 
 
-    srand48(myid);
+    //srand48(myid);
 
 }
 
@@ -206,8 +206,8 @@ void force_add(int grid, double dt){
         Psi[N*j+i][1] = 0;
     }
     else if (kk < kkmax){
-      a0 = 2*drand48() - 1;
-      a1 = 2*drand48() - 1;
+      a0 = 2*myrand48() - 1;
+      a1 = 2*myrand48() - 1;
       Psi[N*j+i][0] = Psi[N*j+i][0] + a0*amp/kk;
       Psi[N*j+i][1] = Psi[N*j+i][1] + a1*amp/kk;
     }

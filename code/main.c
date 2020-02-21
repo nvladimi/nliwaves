@@ -18,6 +18,7 @@ static  int    is_coarsest_step();
 static  double addtime_one_step(int grid);
 
 
+
 /*------------------------------------------------------------------------*/
 
 
@@ -110,6 +111,8 @@ int main(int argc, char **argv)
   sprintf(msg, "#msg: data %04d restored at t = %18.12e\n", nio, t);
   io_message(msg,0);
 
+  myrand48_read(&ctrl, nio);
+  
   diag_ic(psi, psihat, grid, nio, t);
 
   timer_off(tmrInit);
@@ -201,6 +204,7 @@ int main(int argc, char **argv)
 	nio = io_save_data(psi, grid);
         if (diag_averaging) diag_output(nio);
 	io_save_tag(nio, n[0], grid, t);
+	myrand48_save(nio);
 	tmrFLAG = 1;
       }
     } 

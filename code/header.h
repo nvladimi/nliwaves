@@ -344,3 +344,12 @@ extern int find_centers(float **psi, int *In, int *Jn, int nmax, double hmin);
 
 extern void mask_init(geom_ptr geom, phys_ptr phys, fftw_complex *psi);
 extern void mask_apply(int grid, double dt);
+
+
+
+/* myrand48.c */
+
+extern double myrand48();
+extern void myrand48_read(ctrl_ptr ctrl, int filecount);
+extern void myrand48_save(int filecount);
+

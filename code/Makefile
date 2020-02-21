@@ -28,7 +28,7 @@ C_DSE     = main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.
             arrays.c  collapse_one.c mask.c
 
 C_CAPILLARY= main.c grids.c fftw_wrap.c  fft_extra.c io.c parameters.c evolve_rk.c \
-            rk.c rhs_capillary.c forcing_rk.c \
+            rk.c rhs_capillary.c forcing_rk.c myrand48.c \
             infodat_capillary.c  diag_capillary.c diag_spectrum.c \
             timers.c \
             arrays.c  collapse_one.c mask.c
