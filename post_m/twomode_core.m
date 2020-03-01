@@ -1,8 +1,8 @@
-function twomode_core(fbase, fnum, Epsilon, Gamma, Theta, n)
+function twomode_core(fbase, fnum, Gamma, Theta, n)
 
-global epsilon; global gamma; global theta;
+global gamma; global theta;
 
-epsilon = Epsilon; gamma = Gamma;  theta = Theta;
+gamma = Gamma;  theta = Theta;
 
 n1 = n(1);         % number of timesteps per t=pi, must be multiple of n2
 n2 = n(2);         % number of random inputs per t=pi, must be multiple of n3
@@ -25,22 +25,21 @@ A = zeros(N, 4);
 
        [f0, t0] = restore_restart(fbase_ic);
 
-       save([fbase, '.param'], 'fbase', 'fnum', 'epsilon', 'gamma', 'theta', 'n'); 
+       save([fbase, '.param'], 'fbase', 'fnum', 'gamma', 'theta', 'n'); 
   
    else
 
-      save([fbase, '.param'], 'fbase', 'fnum', 'epsilon', 'gamma', 'theta', 'n'); 
+      save([fbase, '.param'], 'fbase', 'fnum', 'gamma', 'theta', 'n'); 
      
       fbase    = [fbase, '.0000'];
       seed  = -fnum;
      
-%%%   b1 = 2/ epsilon;   b2 = - 1/epsilon;        %-- including linear terms --
-      b1 = 1/ epsilon;   b2 = - 0.5/epsilon;      %-- excluding linear terms --
+      b1 = 1;   b2 = - 0.5; 
 
       f0 = [b1, 0, b2, 0];
       t0 = 0;
 
-      rand('twister', seed);
+      randn('twister', seed);
 
     end
     
@@ -58,7 +57,6 @@ A = zeros(N, 4);
 
          for i1=1:n2/n3  % cycle over random inputs
    
-%	    f1 = lsode('fdotB', f0, t1);
 	    f1 = lsode(['fdotB'; 'fjacB'], f0, t1);
             f2 = f1(end,:);
             f0 = frand(f2, dt2);
@@ -84,7 +82,7 @@ A = zeros(N, 4);
   fclose(fid);
 
 
-%return
+return
 
 %-- debugging -- 
 
@@ -97,48 +95,31 @@ A = zeros(N, 4);
 
    figure(1);
    plot(t, A(:,1), '-or', t, A(:,2), '-xr', t, A(:,3), '-ob',  t, A(:,4), '-xb' );
-   axis([t(1), t(end), -20,20]);
+   axis([t(1), t(end), -2,2]);
    set(gca, "fontsize", 20);
 
    figure(2);
    plot(t, N1+2*N2 - 1.5*b1*b1, '-or', t, Hnl + b1*b1, '-ob');
    set(gca, "fontsize", 20)
-   axis([t(1), t(end), -1e-5,1e-5]);
+   axis([t(1), t(end), -1e-7,1e-7]);
    grid("on");
 
 
 end
 
-%---------------------
-
-function f = fdotA(x,t)
-
-  global epsilon;
-  global gamma;
-
-  f1 =     x(2) + 2*epsilon*( x(1)*x(4) - x(2)*x(3) ) + gamma(1)*x(1);
-  f2 =   - x(1) - 2*epsilon*( x(1)*x(3) + x(2)*x(4) ) + gamma(2)*x(2);
-
-  f3 =   2*x(4) + 2*epsilon* x(1)*x(2)                + gamma(3)*x(3);
-  f4 = - 2*x(3) -   epsilon*( x(1)*x(1) - x(2)*x(2) ) + gamma(4)*x(4);
-
-  f = [f1, f2, f3, f4];
-
-end
 
 
 %---------------------
 
 function f = fdotB(x,t)
 
-  global epsilon;
   global gamma;
 
-  f1 =   2*epsilon*( x(1)*x(4) - x(2)*x(3) ) + gamma(1)*x(1);
-  f2 = - 2*epsilon*( x(1)*x(3) + x(2)*x(4) ) + gamma(2)*x(2);
+  f1 =   2*( x(1)*x(4) - x(2)*x(3) ) + gamma(1)*x(1);
+  f2 = - 2*( x(1)*x(3) + x(2)*x(4) ) + gamma(2)*x(2);
 
-  f3 =   2*epsilon* x(1)*x(2)                + gamma(3)*x(3);
-  f4 =  - epsilon*( x(1)*x(1) - x(2)*x(2) )  + gamma(4)*x(4);
+  f3 =   2*x(1)*x(2)                 + gamma(3)*x(3);
+  f4 = - ( x(1)*x(1) - x(2)*x(2) )   + gamma(4)*x(4);
 
   f = [f1, f2, f3, f4];
 
@@ -147,63 +128,27 @@ end
 
 %---------------------
 
-function J = fjacA(x,t)
-
-  global epsilon;
-  global gamma;
-
-  eps2 = 2*epsilon;
-
-  J(1,1) =      eps2 * x(4) + gamma(1);
-  J(1,2) =  1 - eps2 * x(3);
-  J(1,3) =    - eps2 * x(2);
-  J(1,4) =      eps2 * x(1);
-
-  J(2,1) = -1 - eps2 * x(3);
-  J(2,2) =    - eps2 * x(4) + gamma(2);
-  J(2,3) =    - eps2 * x(1);
-  J(2,4) =    - eps2 * x(2);
-
-  J(3,1) =      eps2 * x(2);
-  J(3,2) =      eps2 * x(1);
-  J(3,3) =      gamma(3);
-  J(3,4) =  2;
-
-  J(4,1) =    - eps2 * x(1);
-  J(4,2) =      eps2 * x(2);
-  J(4,3) =  -2;
-  J(4,4) =      gamma(4);
-
-end
-
-
-
-%---------------------
-
 function J = fjacB(x,t)
 
-  global epsilon;
   global gamma;
 
-  eps2 = 2*epsilon;
+  J(1,1) =      2 * x(4) + gamma(1);
+  J(1,2) =    - 2 * x(3);
+  J(1,3) =    - 2 * x(2);
+  J(1,4) =      2 * x(1);
 
-  J(1,1) =      eps2 * x(4) + gamma(1);
-  J(1,2) =    - eps2 * x(3);
-  J(1,3) =    - eps2 * x(2);
-  J(1,4) =      eps2 * x(1);
+  J(2,1) =    - 2 * x(3);
+  J(2,2) =    - 2 * x(4) + gamma(2);
+  J(2,3) =    - 2 * x(1);
+  J(2,4) =    - 2 * x(2);
 
-  J(2,1) =    - eps2 * x(3);
-  J(2,2) =    - eps2 * x(4) + gamma(2);
-  J(2,3) =    - eps2 * x(1);
-  J(2,4) =    - eps2 * x(2);
-
-  J(3,1) =      eps2 * x(2);
-  J(3,2) =      eps2 * x(1);
+  J(3,1) =      2 * x(2);
+  J(3,2) =      2 * x(1);
   J(3,3) =      gamma(3);
   J(3,4) =  0;
 
-  J(4,1) =    - eps2 * x(1);
-  J(4,2) =      eps2 * x(2);
+  J(4,1) =    - 2 * x(1);
+  J(4,2) =      2 * x(2);
   J(4,3) =  0;
   J(4,4) =      gamma(4);
 
@@ -227,12 +172,12 @@ end
 
 function save_restart(fbase, f0, t0)
 
-   randstate = rand ("state");
+   randstate = randn ("state");
 
    fid = fopen([fbase, '.restart'], 'wb');
    fwrite(fid, randstate, 'uint32');
    fwrite(fid, f0, 'double');
-   fwrite(fid, t0,  'double');
+   fwrite(fid, t0, 'double');
    fclose(fid);
 
 end
@@ -242,8 +187,8 @@ end
 
 function [f0, t0] = restore_restart(fbase)
 
-   rand('twister');
-   randstate = rand ("state");
+   randn('twister');
+   randstate = randn ("state");
 
    fid = fopen([fbase, '.restart'], 'rb');
    randstate = fread(fid, 625, 'uint32');
@@ -251,7 +196,7 @@ function [f0, t0] = restore_restart(fbase)
    t0 = fread(fid, 1, 'double');
    fclose(fid);
 
-   rand ('state', randstate);
+   randn ('state', randstate);
 
    f0 = reshape(f0,[1,4]);
 

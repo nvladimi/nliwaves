@@ -38,15 +38,14 @@ function twomode_post(fbase, fnums)
     [N1, N2, Hnl] = hamiltonian(A);
 
 
-   figure(1);
-   plot(t, A(:,1), '-r', t, A(:,2), '--r', t, A(:,3), '-b',  t, A(:,4), '--b' );
-axis([0, 10*pi, -20,20]); grid("on");
-   set(gca, "fontsize", 20);
+%   figure(1);
+%   plot(t, A(:,1), '-r', t, A(:,2), '--r', t, A(:,3), '-b',  t, A(:,4), '--b' );
+%   axis([0, t(end), -2,2]); grid("on"); set(gca, "fontsize", 20);
 
-   figure(2);
-plot(t, N1, '-g', t, N2, '-m',   t, N1+2*N2, '-b',  t, Hnl, '-r');
-axis([0, 2*pi, -200,500]); grid("on");
-   set(gca, "fontsize", 20)
+figure(2);
+plot(t, N1, '-g', t, N2, '-m',   t, N1+2*N2, '-b',  t, Hnl, '-r', t, N1+2*N2+Hnl, '-k');
+%axis([0, t(end), -10,20]); grid("on");
+set(gca, "fontsize", 20); grid("on")
 
 
 end
@@ -62,7 +61,7 @@ end
 
   N1  = x(:,1).*x(:,1) + x(:,2).*x(:,2);
   N2  = x(:,3).*x(:,3) + x(:,4).*x(:,4) ;
-  Hnl  = epsilon * 2 * ( x(:,1).*x(:,1).*x(:,3) - x(:,2).*x(:,2).*x(:,3) + 2*x(:,1).*x(:,2).*x(:,4) ) ;
+  Hnl = 2 * ( x(:,1).*x(:,1).*x(:,3) - x(:,2).*x(:,2).*x(:,3) + 2*x(:,1).*x(:,2).*x(:,4) ) ;
 
  
 end
