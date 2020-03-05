@@ -1,16 +1,10 @@
-function twomode_core(fbase, fnum, Gamma, Theta, n)
+function twomode_core(fbase, fnum, Gamma, Theta, dt, isave, nsave)
 
 global gamma; global theta;
 
 gamma = Gamma;  theta = Theta;
 
-n1 = n(1);         % number of timesteps per t=pi, must be multiple of n2
-n2 = n(2);         % number of random inputs per t=pi, must be multiple of n3
-n3 = n(3);         % number of data saves per t=pi
-n4 = n(4);         % number of pi-periods to run
-N  = n3*n4;        % total number of snapshots to save
-
-A = zeros(N, 4);
+A = zeros(nsave, 4);
 
   
 %-------------------------------------------------
@@ -25,11 +19,11 @@ A = zeros(N, 4);
 
        [f0, t0] = restore_restart(fbase_ic);
 
-       save([fbase, '.param'], 'fbase', 'fnum', 'gamma', 'theta', 'n'); 
+       save([fbase, '.param'], 'fbase', 'fnum', 'gamma', 'theta', 'dt', 'isave', 'nsave'); 
   
    else
 
-      save([fbase, '.param'], 'fbase', 'fnum', 'gamma', 'theta', 'n'); 
+      save([fbase, '.param'], 'fbase', 'fnum', 'gamma', 'theta', 'dt', 'isave', 'nsave'); 
      
       fbase    = [fbase, '.0000'];
       seed  = -fnum;
@@ -47,47 +41,42 @@ A = zeros(N, 4);
 	
 %-- intergrate ---
 
-   dt1 = pi/n1;
-   dt2 = pi/n2;
+  t1 = [0:1]*dt;
 
+   for i2=1:nsave  % cycle over saves
 
-   t1 = (0:n1/n2)*dt1;
-
-   for i3=1:N  % cycle over saves
-
-         for i1=1:n2/n3  % cycle over random inputs
+            for i1=1:isave  % cycle over random inputs
    
 	    f1 = lsode(['fdotB'; 'fjacB'], f0, t1);
             f2 = f1(end,:);
-            f0 = frand(f2, dt2);
+            f0 = frand(f2, dt);
 
          end
 		 
-         A(i3,:) = f0;	 
+         A(i2,:) = f0;	 
 
    end
    
 %-- save data --
 
-  dt3 = pi/n3;
-  t = transpose((1:N))*dt3 + t0;
+  t = transpose((1:nsave))*isave*dt + t0;
    
   save_restart(fbase, f0, t(end));
 
   A = [t,A];
-  A = reshape(A, [N*5, 1]);
+  A = reshape(A, [nsave*5, 1]);
 
   fid = fopen([fbase, '.a1a2'], 'wb');
   fwrite(fid, A, 'double');
   fclose(fid);
 
 
-return
+%return
 
 %-- debugging -- 
 
 
-   A = reshape(A, [N, 5]);
+   A = reshape(A, [nsave, 5]);
    A = A(:, 2:5);
 
    [N1, N2, Hnl] = hamiltonian(A);
@@ -206,11 +195,9 @@ end
 
  function [N1, N2, Hnl] = hamiltonian(x);
 
-  global epsilon;
-
   N1  = x(:,1).*x(:,1) + x(:,2).*x(:,2);
   N2  = x(:,3).*x(:,3) + x(:,4).*x(:,4) ;
-  Hnl  = epsilon * 2 * ( x(:,1).*x(:,1).*x(:,3) - x(:,2).*x(:,2).*x(:,3) + 2*x(:,1).*x(:,2).*x(:,4) ) ;
+  Hnl  = 2 * ( x(:,1).*x(:,1).*x(:,3) - x(:,2).*x(:,2).*x(:,3) + 2*x(:,1).*x(:,2).*x(:,4) ) ;
 
  
 end

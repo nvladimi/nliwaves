@@ -1,10 +1,12 @@
-function twomode_post(fbase, fnums)
+function twomode_post(fbase_in, fnums)
  
-    fname = [fbase, '.param'];
-  
+    fname = [fbase_in, '.param'];
+
     load(fname);   %('fbase', 'fnum', 'epsilon', 'gamma', 'theta', 'n'); 
-  
-    N = n(3)*n(4);
+
+    fbase = fbase_in;
+
+    N = nsave;
 
     A = zeros(N*length(fnums), 5);
 
