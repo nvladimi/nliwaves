@@ -1,10 +1,8 @@
 
-function twomode_wrap(fbase, gam, ksi, dt, isave, nsave, fnums)
+function twomode_test
 %
-% "twomode_wrap" is a wrapper script for production runs.
-%
-% For testing and debugging use "twomode_test" instead.
-% Modify for a specific setup and use with "twomode_call" to pass arguments from shell scripts.
+% "twomode_test" is a wrapper script for test runs.
+% For production runs use "twomode_wrap" instead.
 %
 % Parameters to "twomode_core":
 %
@@ -18,13 +16,15 @@ function twomode_wrap(fbase, gam, ksi, dt, isave, nsave, fnums)
 % nsave        generate "nsave" number of saves
 % showplot     supress debudding plots if showplot=0
 %
-  
+
+fbase     = "tm0";
+seed     = 0;
+gamma    = [0, 0, 0, 0];
+theta    = [0, 0, 0, 0]; 
+dt       = 0.4;
+isave    = 1;
+nsave    = 100;
 showplot = 1;
-seed  = 0;
-
-gamma   =  [0, 0, -gam, -gam];    % decay
-theta   =  [ksi, ksi, 0, 0];      % noise amplitude
-
 
 %---------------------
 
@@ -34,12 +34,6 @@ lsode_options ("integration method", "adams");
 
 
 twomode_core(fbase, seed, gamma, theta, dt, isave, nsave, showplot);
-
-for fnum = 1:fnums
-
-	     twomode_core(fbase, fnum, gamma, theta, dt, isave, nsave, showplot);
-
-end
 
 %---------------------
 
