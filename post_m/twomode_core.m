@@ -1,4 +1,4 @@
-function twomode_core(fbase, fnum, Gamma, Force, dt, isave, nsave, showplot)
+function twomode_core(fbase, fnum, Gamma, Rflux, dt, isave, nsave, showplot)
 %
 % "twomode_core" is a compute core for two-mode evolution, do not modify.
 %
@@ -10,8 +10,8 @@ function twomode_core(fbase, fnum, Gamma, Force, dt, isave, nsave, showplot)
 % fbase        sring base for output files
 % seed/fnum    when positive, second argument to "twomode_core" restore IC from (fnum-1) files
 %              otherwise use as seed to create (fnum=0) file
-% gamma        strength of decay (<0) or multiplicative forcing (>0), gamma[re1, im1, re2, im2]
-% force        noise amplitude,  force[re1, im1, re2, im2]
+% Gamma        strength of decay (<0) or multiplicative forcing (>0), Gamma[re1, im1, re2, im2]
+% Rflux        flux of random force,  Rflux[re1, im1, re2, im2]
 % dt           timestep
 % isave        save data every "isave" timestep
 % nsave        generate "nsave" number of saves
@@ -19,11 +19,11 @@ function twomode_core(fbase, fnum, Gamma, Force, dt, isave, nsave, showplot)
 %
   
   
-global gamma; global force_coef;
+global gamma; global force;
 
-gamma = Gamma;  force = Force;
+gamma = Gamma;
+force = sqrt(Rflux) * sqrt(dt) / sqrt(2);
 
-force_coef = force * sqrt(dt) / sqrt(2);
 
 A = zeros(nsave, 4);
   
@@ -39,11 +39,11 @@ A = zeros(nsave, 4);
 
        [f0, t0] = restore_restart(fbase_ic);
 
-       save([fbase, '.param'], 'fnum', 'gamma', 'force', 'dt', 'isave', 'nsave'); 
+       save([fbase, '.param'], 'fnum', 'Gamma', 'Rflux', 'dt', 'isave', 'nsave'); 
   
    else
 
-      save([fbase, '.param'], 'fnum', 'gamma', 'force', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', 'Gamma', 'Rflux', 'dt', 'isave', 'nsave'); 
      
       fbase    = [fbase, '.0000'];
       seed  = -fnum;
@@ -170,9 +170,9 @@ end
 
 function f = frand(x,dt)
 
-  global force_coef;
+  global force;
 
-  r = randn(1,4) .* force_coef; 
+  r = randn(1,4) .* force; 
 
   f = x + r;
 
