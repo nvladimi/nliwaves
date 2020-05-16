@@ -19,9 +19,11 @@ function twomode_core(fbase, fnum, Gamma, Force, dt, isave, nsave, showplot)
 %
   
   
-global gamma; global force;
+global gamma; global force_coef;
 
 gamma = Gamma;  force = Force;
+
+force_coef = force * sqrt(dt) / sqrt(2);
 
 A = zeros(nsave, 4);
   
@@ -168,11 +170,11 @@ end
 
 function f = frand(x,dt)
 
-  global force;
+  global force_coef;
 
-  r = randn(1,4) .* force; 
+  r = randn(1,4) .* force_coef; 
 
-  f = x + r * sqrt(dt);
+  f = x + r;
 
 end
 
