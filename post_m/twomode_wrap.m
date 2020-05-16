@@ -1,5 +1,5 @@
 
-function twomode_wrap(fbase, Gamma, Force, dt, isave, nsave, fnums)
+function twomode_wrap(fbase, G1, G2, F1, F2, dt, isave, nsave, fnums)
 %
 % "twomode_wrap" is a wrapper script for production runs.
 %
@@ -22,8 +22,8 @@ function twomode_wrap(fbase, Gamma, Force, dt, isave, nsave, fnums)
 showplot = 1;
 seed  = 0;
 
-gamma   =  [0, 0, -Gamma, -Gamma];    % decay
-force   =  [Force, Force, 0, 0];      % noise amplitude
+gamma   =  [-G1, -G1, -G2, -G2];    % decay
+force   =  [F1, F1, F2, F2];        % noise amplitude
 
 
 %---------------------
