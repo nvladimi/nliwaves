@@ -1,10 +1,9 @@
-function twomode_wrap(fbase, gam, ksi, dt, isave, nsave)
+function twomode_wrap(fbase, gam, ksi, dt, isave, nsave, fnums)
 
-fnums = 0;
 seed  = -1;
 
-gamma   =  [-gam, -gam, 0, 0];    % decay
-theta   =  [0, 0, ksi, ksi];      % noise amplitude
+gamma   =  [0, 0, -gam, -gam];    % decay
+theta   =  [ksi, ksi, 0, 0];      % noise amplitude
 
 
 %---------------------
