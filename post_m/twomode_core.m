@@ -33,7 +33,7 @@ A = zeros(nsave, 4);
 
    if (fnum > 0) 
 
-       fbase_ic = [fbase, '.',  num2str(fnum-1, '%04d')]
+       fbase_ic = [fbase, '.',  num2str(fnum-1, '%04d')];
 
        fbase    = [fbase, '.',  num2str(fnum, '%04d')];
 
@@ -48,16 +48,19 @@ A = zeros(nsave, 4);
       fbase    = [fbase, '.0000'];
       seed  = -fnum;
 
-      if ( abs(Gamma(1)) ~= 0 )
-	   b1 = sqrt( 0.5* Rflux(1)/abs(Gamma(1)) );
-      else
-	   b1 = 1;
-      end
+      if ( (abs(Gamma(1)) == 0)  &&  (Rflux(3) == 0) )         %-- direct cascade
+							     
+	   b2 = sqrt( 0.25 * Rflux(1)/abs(Gamma(3)) );
+           b1 = -b2*sqrt(2);
 
-      if ( abs(Gamma(2)) ~= 0 )
-	   b2 = -0.5 * sqrt( 0.5* Rflux(2)/abs(Gamma(2)) );
-      else
-	   b2 = -0.5;
+      elseif  ( (abs(Gamma(3)) == 0)  &&  (Rflux(1) == 0) )    %-- inverse cascade
+      
+	   b1 = sqrt( 0.5* Rflux(3)/abs(Gamma(1)) );
+           b2 = -b1 /sqrt(2);
+
+      else                                                     %-- equilibrium
+	   b1 = sqrt( 0.5* Rflux(1)/abs(Gamma(1)) );
+      	   b2 = -0.5 * sqrt( 0.5* Rflux(2)/abs(Gamma(2)) );
       end
 
 

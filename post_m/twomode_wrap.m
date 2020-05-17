@@ -19,7 +19,7 @@ function twomode_wrap(fbase, G1, G2, F1, F2, dt, isave, nsave, fnums)
 % showplot     supress debudding plots if showplot=0
 %
   
-showplot = 1;
+showplot = 0;
 seed  = 0;
 
 Gamma   =  [-G1, -G1, -G2, -G2];    % decay
