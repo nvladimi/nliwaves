@@ -47,8 +47,19 @@ A = zeros(nsave, 4);
      
       fbase    = [fbase, '.0000'];
       seed  = -fnum;
-     
-      b1 = 1;   b2 = - 0.5; 
+
+      if ( abs(Gamma(1)) ~= 0 )
+	   b1 = sqrt( 0.5* Rflux(1)/abs(Gamma(1)) );
+      else
+	   b1 = 1;
+      end
+
+      if ( abs(Gamma(2)) ~= 0 )
+	   b2 = -0.5 * sqrt( 0.5* Rflux(2)/abs(Gamma(2)) );
+      else
+	   b2 = -0.5;
+      end
+
 
       f0 = [b1, 0, b2, 0];
       t0 = 0;

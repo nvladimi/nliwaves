@@ -19,12 +19,13 @@ function twomode_test
 
 fbase     = "tm0";
 seed     = 0;
-Gamma    = [0, 0, 0, 0];
-Rflux    = [0, 0, 0, 0]; 
-dt       = 0.4;
+Gamma    = [-1, -1, -2, -2]*0.01;
+Rflux    = [1, 1, 1, 1] * 1e-3; 
+dt       = 0.1;
 isave    = 1;
-nsave    = 100;
+nsave    = 1000;
 showplot = 1;
+
 
 %---------------------
 
