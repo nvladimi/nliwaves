@@ -79,7 +79,7 @@ tic
     %-- create probabilty array ---
 
   
-    P123 = zeros(nN1, nN2, nPhi+1, 'uint16');
+    P123 = zeros(nN1, nN2, nPhi+1, 'uint32');
     nPi = nPhi/2;
 
 
@@ -96,7 +96,7 @@ toc
 tic
 
   for i=1:ntot
- 	    P123(iN1(i),iN2(i),iPhi(i)) = P123(iN1(i),iN2(i),iPhi(i))  + uint16(1);
+ 	    P123(iN1(i),iN2(i),iPhi(i)) = P123(iN1(i),iN2(i),iPhi(i))  + uint32(1);
    end
 
 toc
@@ -110,7 +110,7 @@ toc
 save( fnameout, 'ntot', 'nPhi', 'nN1', 'nN2', 'max_N1', 'max_N2', 'g1', 'g2', 'p1', 'p2' ); 
 
 fid = fopen([fbaseout, '.P123'], 'wb');
-fwrite(fid, P123, 'uint16');
+fwrite(fid, P123, 'uint32');
 fclose(fid);
 
 return

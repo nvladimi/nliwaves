@@ -12,9 +12,9 @@ phi_slices = [1, 8, 16, 24];
 
     load(fname);  % ('ntot', 'nPhi', 'nN1', 'nN2', 'max_N1', 'max_N2', 'g1', 'g2', 'p1', 'p2' );
 
-    fid = fopen([fbase_in, '.P123'], 'rb');      % P123(nN1, nN2, nPhi+1, 'uint16');
+    fid = fopen([fbase_in, '.P123'], 'rb');      % P123(nN1, nN2, nPhi+1, 'uint32');
 
-    P123 = fread(fid, nN1*nN2*nPhi, 'uint16');
+    P123 = fread(fid, nN1*nN2*nPhi, 'uint32');
 
     fclose(fid);
 
