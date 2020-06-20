@@ -1,15 +1,15 @@
 function twomode_core(fbase, fnum, Gamma, Rflux, dt, isave, nsave, showplot)
 %
-% "twomode_core" is a compute core for two-mode evolution, do not modify.
+% "twomode_core" is a compute core for two-mode evolution, do not modify it.
 %
 % For testing and debugging use "twomode_test".
 % For production runs use "twomode_wrap" with "twomode_call" to pass arguments from shell scripts.
 %
 % Parameters:
 %
-% fbase        sring base for output files
-% seed/fnum    when positive, second argument to "twomode_core" restore IC from (fnum-1) files
-%              otherwise use as seed to create (fnum=0) file
+% fbase        string base for output files
+% seed/fnum    when positive, use second argument to "twomode_core" to restore IC from (fnum-1) files,
+%              otherwise use it as a seed to create (fnum=0) file
 % Gamma        strength of decay (<0) or multiplicative forcing (>0), Gamma[re1, im1, re2, im2]
 % Rflux        flux of random force,  Rflux[re1, im1, re2, im2]
 % dt           timestep

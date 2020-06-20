@@ -1,7 +1,7 @@
 
 function twomode_wrap(fbase, G1, G2, F1, F2, dt, isave, nsave, fnums)
 %
-% "twomode_wrap" is a wrapper script for production runs.
+% "twomode_wrap" is a wrapper script for "twomode_core" for production runs.
 %
 % For testing and debugging use "twomode_test" instead.
 % Modify for a specific setup and use with "twomode_call" to pass arguments from shell scripts.
@@ -12,7 +12,7 @@ function twomode_wrap(fbase, G1, G2, F1, F2, dt, isave, nsave, fnums)
 % seed/fnum    when positive, second argument to "twomode_core" restore IC from (fnum-1) files
 %              otherwise use as seed to create (fnum=0) file
 % Gamma        strength of decay (<0) or multiplicative forcing (>0), Gamma[re1, im1, re2, im2]
-% Rflux        flux of random force, Rflux[re1, im1, re2, im2]
+% Rflux        flux of random force,  Rflux[re1, im1, re2, im2]
 % dt           timestep
 % isave        save data every "isave" timestep
 % nsave        generate "nsave" number of saves

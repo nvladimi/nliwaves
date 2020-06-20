@@ -1,6 +1,16 @@
 function twomode_array_n1n2theta(fbase, fnums, fbaseout)
+%
+%  "twomode_array_n1n2theta" is the script to compute 3D probapility array
+%  in variables (n1, n2, theta) from evolution data.
+%  Data input is from files "*.a1a2", data output is to file "*.P123".
+%  Bin number and sizes are specifies in the script.
+%
+%  Input parameters:
+%   fbase     string base for input files
+%   fnums     array of input files to process
+%   fbaseout  string base for output files
+%
 
-tic
     nPhi    = 32;
     nN1     = 200;
     nN2     = 100;
@@ -10,7 +20,7 @@ tic
     fname = [fbase, '.param'];
     load(fname);  % ('fnum', 'Gamma', 'Rflux', 'dt', 'isave', 'nsave'); 
       
-    ntot = nsave*length(fnums)
+    ntot = nsave*length(fnums);
 
     B = zeros(ntot, 5);
 
@@ -33,10 +43,6 @@ tic
 
     end
 
-    
-   % B = B(1:ntmp,:);
-   % ntot = ntmp;    
-
     %-- rescale data -- 
 
     g1  = - Gamma(1);
@@ -45,15 +51,8 @@ tic
     p2  =   Rflux(3);
 
     T = (p1 + 2*p2)/2/(g1+g2);
-    dT = p1/g1 - 2*p2/g2;
-    chi = (g1 + g2)^2 /2/T;
-    beta = 1 + 2*p2/p1;
-    alpha = dT/T *g1*g2/(g1+g2)*beta;
-
-    g = 0.5*g1*g2/(g1+g2);
 
     B = reshape(B, [ntot, 5]);
-    t = B(:,1) * g ;
     B = B(:, 2:5) /sqrt(T);
 
     %-- convert data to probability variables -- 
@@ -61,14 +60,11 @@ tic
     b1 = B(:,1) + 1i * B(:,2);
     b2 = B(:,3) + 1i * B(:,4);
 
-    %F =  4 * imag ( b1 .* b1 .* conj(b2) );
-    %K =  2 * real ( b1 .* b1 .* conj(b2) );
-
     N1 = b1.*conj(b1);
     N2 = b2.*conj(b2);
 
-    N1_avg = sum(N1)/ntot
-    N2_avg = sum(N2)/ntot
+    N1_avg = sum(N1)/ntot;
+    N2_avg = sum(N2)/ntot;
 
     a1=angle(b1);
     a2=angle(b2);
@@ -91,15 +87,12 @@ tic
     iN2  = min(iN2, nN2);
 
     iPhi = round( phi./pi * nPi) + nPi + 1;
-toc
 
-tic
 
-  for i=1:ntot
+   for i=1:ntot
  	    P123(iN1(i),iN2(i),iPhi(i)) = P123(iN1(i),iN2(i),iPhi(i))  + uint32(1);
    end
 
-toc
 
    P123(:,:,1) = P123(:,:,1) + P123(:,:,end);
    P123 = P123(:,:,1:end-1);

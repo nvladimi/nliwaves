@@ -1,4 +1,14 @@
 function twomode_basics(fbase, fnums, ev)
+%
+%  "twomode_basics" is the script to compute derived parameteres of the run
+%  and occupation numbers, and to estimate time step restrictions. 
+%  Data input is from files "*.a1a2", data output is to the screen".
+%
+%  Input parameters:
+%   fbase     string base for input files
+%   fnums     array of input files to process
+%   ev        if ev>0, plot occupation numbers using every "ev" datapoint
+%
  
    fname = [fbase, '.param'];
   
@@ -42,11 +52,13 @@ function twomode_basics(fbase, fnums, ev)
     n1 = sum(sum(N1))/ntot;
     n2 = sum(sum(N2))/ntot;
 
-    ind=(1:ev:length(t));
-    ti=t(ind); N1i=N1(ind); N2i=N2(ind);
-    plot(ti, N1i, '-r', ti, N2i, '-b');
-    set(gca, "fontsize", 20);  grid("on")
 
+    if (ev > 0)
+      ind=(1:ev:length(t));
+      ti=t(ind); N1i=N1(ind); N2i=N2(ind);
+      plot(ti, N1i, '-r', ti, N2i, '-b');
+      set(gca, "fontsize", 20);  grid("on")
+    end
 
 
     %-- print out basics ---
@@ -58,15 +70,15 @@ function twomode_basics(fbase, fnums, ev)
     p2  =   Rflux(3);
 
     T = (p1 + 2*p2)/2/(g1+g2);
-    dT = p1/g1 - 2*p2/g2;
-    chi = (g1 + g2)^2 /2/T;
-    beta = 1 + 2*p2/p1;
-    alpha = dT/T *g1*g2/(g1+g2)*beta;
+    T1 = 0.5*p1/g1;
+    T2 = p2/g2;
 
+    dT = 2*(T1 - T2);
+    chi = (g1 + g2)^2 /	2/T;
 
-    printf("%s | %4.2f  %4.2f  %5.2e  %5.2e  %5.3f  | ", fbase,  g1, g2, p1, p2, dt);
+    printf("%s | %4.2f  %4.2f  %5.2e  %5.2e  %5.3f  %5.1f | ", fbase,  g1, g2, p1, p2, dt, ntot/1e6);
  
-    printf("%7.3f  %5.2e  %4.2e  %6.4f  %6.4f | ", chi, alpha,  T,  n1/T,  n2/T);
+    printf("%8.3f  %8.2e  %9.2e  %6.4f  %6.4f | ", chi, T, dT/T,  n1/T,  n2/T);
     printf("%5.1f  %5.1f  %5.1f  %5.1f  %5.1f  %5.1f\n",   pi/sqrt(n1), pi/sqrt(4*n2),  1/g1, 1/g2,  n1/p1, n2/p2  );
  
     

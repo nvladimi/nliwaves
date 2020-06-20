@@ -1,7 +1,7 @@
 
 function twomode_test
 %
-% "twomode_test" is a wrapper script for test runs.
+% "twomode_test" is a wrapper script for "twomode_core" for test runs.
 % For production runs use "twomode_wrap" instead.
 %
 % Parameters to "twomode_core":
