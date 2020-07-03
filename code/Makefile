@@ -60,15 +60,13 @@ DEF_NLS     =
 #DEF_NLS    = -DQ_FLUX_FILTER
 #DEF_NLS    = -DEXIT_AT_PSIMAX
 
-
-
 LIB_MPI      = -lmpi
 LIB_FFT      = -lfftw3_mpi -lfftw3
 INC_MPI      = 
 INC_FFT      = 
 LIB_ADD      = -lm -lrt
 
-
+#--------------------------------------------------
 
 ifeq ($(HOSTNAME), tangle)
         LIB_MPI      = -lmpi
