@@ -1,15 +1,17 @@
-# Gibbs:     module load openmpi/1.6.5/intel/12.1.5 fftw/3.3.3/openmpi/1.6.5/intel/12.1.5 
-# Pequena:   module load openmpi/1.6.3/intel/11.1 fftw/3.3.3/openmpi/1.6.3/intel/11.1
-# Encanto:   login to service2; module load mvapich_intel cc/10.1.015
-
+#----------------------------------------------
+# NLIWAVES - NONLINEAR WAVES 
+# MAKEFILE FOR DIFFERENT SETUPS
+#----------------------------------------------
 # Name of the executable
+
 NLS     = nls.x
-IC      = nls_ic.x
+IC      = nlw_ic.x
 DSE     = nls_ds.x
 NLSTEST = nlstest.x
 NLSPOST = nlspost.x
 CAPILLARY = capillary.x
 
+#---------------------------------------------
 # List of the sources
 # For tests use "test_timers.c", "test_ffttime.c", or "test_deriv.c" as main
 
@@ -51,9 +53,8 @@ LINK = mpicc
 OPT  =  -g3  #-O2
 
 
-#-------------------------------------------------
-
-#generic
+#----------------------------------------------------
+# Generic
 
 DEF_NLS     = 
 #DEF_NLS    = -DDEBUG
@@ -67,6 +68,7 @@ INC_FFT      =
 LIB_ADD      = -lm -lrt
 
 #--------------------------------------------------
+# Some known systems
 
 ifeq ($(HOSTNAME), tangle)
         LIB_MPI      = -lmpi
@@ -75,7 +77,6 @@ ifeq ($(HOSTNAME), tangle)
         LIB_ADD      = -lm
 	DEF_NLS      =
 endif
-
 
 
 ifeq ($(HOSTNAME), hooloovoo)
@@ -90,7 +91,6 @@ endif
 ifeq ($(HOSTNAME), odin)
         OPT =  -flto -Ofast
 endif
-
 
 
 ifeq ($(HOSTNAME), mallorn)
@@ -166,9 +166,6 @@ ifeq ($(HOSTNAME), comet-ln4.sdsc.edu)
 endif
 
 
-
-
-
 #-------------------------------------------------
 
 OBJ_NLS     = $(C_NLS:.c=.o ) $(F_NLS:.f=.o )
@@ -181,13 +178,14 @@ OBJ_CAPILLARY   = $(C_CAPILLARY:.c=.o )
 LIB_NLS     = $(LIB_MPI) $(LIB_FFT) $(LIB_ADD)
 
 INC_NLS     = $(INC_MPI) $(INC_FFT)
+
 #-------------------------------------------------
 
 # Compilation rule for the executable
 # THERE MUST BE A Tab BEFORE THE $(CC) SYMBOL !!!
 
 default:
-	@echo "\n   options:   ic, nls, dse, nlstest, nlspost, capillary, hostname\n"
+	@printf  "\n   options:   ic, nls, dse, nlstest, nlspost, capillary, hostname\n\n"
 
 .f.o:
 	$(FC) $(FFLAGS) -c $<
