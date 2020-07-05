@@ -46,8 +46,10 @@ M = m;
 
       save([fbase, '.param'], 'fnum', 'G', 'P', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
      
-      fbase    = [fbase, '.0000'];
       seed  = -fnum;
+      fnum  = 0;
+      fbase    = [fbase, '.0000'];
+      save([fbase, '.param'], 'fnum', 'G', 'P', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
 
       randn('twister', seed);
       rand('twister', seed);
@@ -312,7 +314,7 @@ function   set_forcing_damping(G, P, runtype)
 %  force_type 3:     force = [0, ..., 0, P, P],         gamma = [G, G, 0, ..., 0];        inverse cascade
 %  force_type 4:     force = [0, ..., 0, P/Fi, P/Fi],   gamma = [G, G, 0, ..., 0];        inverse cascage balanced
 %  force_type 5:     force = [P, P, P, ..., P],         gamma = P*Fi/2;                   equilibrium by force
-%  force_type 6:     force = 2*G*Fi,                    gamma = [G, G, G, ..., G];        equilibrium by decay
+%  force_type 6:     force = 2*G/Fi,                    gamma = [G, G, G, ..., G];        equilibrium by decay
 %
 
    global M;
