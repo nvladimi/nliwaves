@@ -375,7 +375,7 @@ function   set_forcing_damping(G, P, runtype)
    end
   
    gamma = -gamma;
-   force = [force; force] / sqrt(2);
+   force = sqrt([force; force]) / sqrt(2);
    force = reshape(force, [1,2*M]);
 
 end
