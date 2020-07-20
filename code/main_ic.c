@@ -8,6 +8,8 @@ void ic_header(geom_ptr geom, ctrl_ptr ctrl, ic_ptr ic);
 void ic_parameters(int *argc, char ***argv, 
 		geom_ptr geom, ctrl_ptr ctrl, ic_ptr ic);
 
+void ic_save_seed(ctrl_ptr ctrl, ic_ptr ic);
+
 /*------------------------------------------------------------------------*/
 
 
@@ -50,6 +52,8 @@ int main(int argc, char **argv)
 
   nio = io_save_data(psi, grid);
 
+  ic_save_seed(&ctrl, &ic);
+  
   io_save_tag(nio, nio, grid, t);
 
 
@@ -160,6 +164,40 @@ void ic_parameters(int *argc, char ***argv,
 
 }
 
+
+/*------------------------------------------------------------------------*/
+
+void ic_save_seed(ctrl_ptr ctrl, ic_ptr ic)
+{
+  char           filename[80];
+  unsigned short *seeds;
+  int            i;
+
+  FILE      *thefile;
+  
+
+  if (myid != 0) return;
+
+  
+  /*-- master processor creates array of seeds and write file --*/
+   
+
+  seeds = (unsigned short *) malloc( 3*np );
+
+  srand48(ic->Seed);
+      
+  for (i=0; i<np*3; i++) seeds[i] = drand48() * 65535.0;
+ 
+  sprintf(filename, "%s.seed.0000", ctrl->runname);
+
+  thefile = fopen (filename, "wb");
+
+  fwrite (seeds, 3*np*sizeof(unsigned short), 1, thefile);
+
+  fclose(thefile);
+
+
+}
 
 
 /*-----------------------------------------------------------*/
