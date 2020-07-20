@@ -1,0 +1,17 @@
+#---------------------------------------------------------
+
+# geometry parameters
+
+  N0        256  # size of grid, N0xN0
+  Lx       -2    # size in x-direction, negative - units of pi
+  Ly       -2    # Ly = Lx
+
+
+# initial conditions
+
+  ic_type      sp_bump # localized initial spectrum
+  ic_seed      1       # random seed
+  ic_kmin      1       # min mode of initial spectrum
+  ic_kmax     10       # max mode of initial spectrum
+  ic_npart     1       # parameter controlling amplitude of fluctuations
+

@@ -1,0 +1,31 @@
+#---------------------------------------------------------
+
+# geometry parameters
+
+  Ngrids      1    # number of grids; DO NOT EDIT
+  N0        128    # size of coarsest grid, N0xN0; SAME AS IN INITIAL CONDITIONS
+  Lx        4.0    # size in x-direction, negative - units of pi
+  Ly        4.0    # Ly = Lx; SAME AS IN INITIAL CONDITIONS
+  dealiasZ  0.666  # relative K where dealiasing starts; DO NOT EDIT
+  dealiasF    8    # size of the smoothing filter, in points; DO NOT EDIT
+
+
+# physics parameters
+
+  coefA       1.0  # coef "a" for nonlinearity in surface elevation; DO NOT EDIT
+  coefB       1.0  # coef "b" for nonlinearity in velocity potential; DO NOT EDIT
+
+
+# control parameters
+
+  tmax      0.1  # time at the end of simulation
+  dnInfo     10  # coarse step intervals when to save basic info
+  dnDiag     10  # diagnostics is done every so many info intervals
+  dnData     10  # binary data is saved every so many info intervals
+  dt0     1.e-4  # if set, overrides dt from CFL at coarsest grid
+# CFL      0.20  # dt = CFL*(dx)^2 
+
+
+# diagnostics parameters
+
+

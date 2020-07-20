@@ -1,0 +1,18 @@
+#---------------------------------------------------------
+
+# geometry parameters
+
+  N0        128  # size of the grid, N0xN0
+  Lx        4    # size in x-direction, negative - units of pi
+  Ly        4    # Ly = Lx; ALWAYS KEEP CONSISTENT
+
+
+# initial conditions
+
+  ic_type      ellipse
+  ic_h         0.5     # height of bump
+  ic_a         0.4     # half-length of bump
+  ic_b         0.4     # half-width of bump
+  ic_x0        2.0     # x-location
+  ic_y0        2.0     # y-location
+

@@ -1,0 +1,109 @@
+-----------------------------------------------------------
+  NLIWAVES  - NONLINEAR WAVES 
+  COMPILING EXECUTIBLES FOR CAPILLARY SETUP
+-----------------------------------------------------------
+
+  Checkout the "nliwaves" code from github.
+     
+     >> git clone https://github.com/nvladimi/nliwaves
+
+  Load fftw module and make sure "fftw3-mpi.h" and "libfftw3_mpi.a" are in your path.
+  You might need to load mpi module as well.  If you are not familiar with fftW and MPI,
+  about both libraries.
+
+     >> module avail
+        ...
+     >> module load fftw
+
+  If the compiler cannot find a header or a library, specify paths in "generic" section of Makefile
+
+      LIB_FFT = -L($PATH_TO_FFTW_LIBRARIES)  -lfftw3_mpi -lfftw3
+      INC_FFT = -I($PATH_TO_FFTW_HEADER)
+
+  This might help to find paths
+
+     >> export | grep fftw
+     >> locate fftw3-mpi.h
+          /usr/local/include/fftw3-mpi.h
+
+  Compile executilbles
+
+     >> cd nliwaves/code
+     >> make ic
+        ...
+     >> make capillary
+        ...
+
+   If everyting works, this should create files "ic_nlw.x" and  "capillary.x" in current directory.
+   The first exectutible generates initial conditions, the second runs time evolution.  
+
+----------------------------------------------------------
+  RUNNING EXAMPLES FOR CAPILLARY SETUP
+-----------------------------------------------------------
+
+  Move executable to the directory where you are going to run the code.
+  In addition, you will need a parameter file for initial conditions "*.ic",
+  and parameter file for evolution, "*.in".  Subdirectory "nliwaves/code/supl" contains
+  example input files for two setups: "capcirc" - evolution of a circular wave,
+  and "capturb" - turbulence of capillary waves.  Both tests are designed to run
+  on a typical linux (or mac) workstaion within minutes.
+  
+     >> mv ic_nlw.x  capillary.x  ~/testrun
+     >> cp ../supl/capcirc.??  ~/testrun
+     >> cp ../supl/capturb.??  ~/testrun
+     >> cd ~/testrun
+
+  Run "nlw_ic.x" to generate initial conditions:
+
+     >>  mpirun -np 8 nlw_ic.x capcirc
+
+  This generates 4 files that will be used as input for time evolution:
+
+      capcirc.out           text file that echos input parameters and basic log
+      capcirc.psi.0000      finary file with field variables
+      capcirc.seed.0000     binary file with the state of random number generator
+      capcirc.tag           text file with the state of last output
+                            (file number, step number, grid level - always zero for this setup).
+
+  Run "capillary.x" to evolve the system:
+
+    >>  mpirun -np 8 capillary.x capcirc
+
+  This will append "capcirc.out", rewrite "capcirc.tag" and generate additional files:
+
+      capcirc.dat           text file with integral quantities
+      capcirc.timers        internal measument of time spent in different subroutines in text format
+      capcirc.psi.????      finary files with field variables
+      capcirc.spc.????      text files with instantaneous spectra or time-averaged spectra
+      capcirc.seed.????     binary files with the state of random number generator
+      
+   The setup for the evolution of tubulent system, "capturb", can be run the same way.
+   
+----------------------------------------------------------
+  INSPECTING OUTPUT AND MODIFING INPUT
+-----------------------------------------------------------
+
+   Text files with time evolution of integral quantites "*.dat" and text files with spectra "*.spc"
+   are in column-base format suitable for plotting with gnuplot, matlab/octave, and python.
+   They contain headers with basic info; if additional description is needed I will write it later.
+
+   Files "*.psi.????" contain binary data in double precision for field variables "eta" and "psi".
+   The matlab/octave script "nliwaves/post_m/read_psi.m" can read the data.
+   It returns the data array in complex format:  f = eta + i psi.   The second argument in
+   "read_psi.m" specifies the size of array in gridpoints, same as in "*.ic" and "*.in" files.
+    Note that a_k  = (eta_k - i psi_k)/sqrt(2) = conj(f_k)/sqrt(2).
+
+   Example of usage:
+
+      octave:> N=128; f = read_psi("capcirc.psi.0010", N); eta = real(f); psi = imag(f);
+      octave:> surfl(eta, [0.5, -1, 1]); shading interp; axis([0,N,0,N,-0.1,0.6], 'off'); colormap("bone");
+      octave:> imagesc(psi); axis("square", "off"); colormap("jet")
+
+   Values for parameters of simulations can be modified in text files "*.ic" and "*.in".
+   File format assumes one parameter per line in the form:
+   
+      parameter_name  parameter_value   # commment
+
+
+------------------------------------------------------------
+
