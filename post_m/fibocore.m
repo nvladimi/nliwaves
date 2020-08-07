@@ -1,4 +1,4 @@
-function fibo_core(fbase, fnum, G, P, m, runtype, dt, isave, nsave, showplot)
+function fibocore(fbase, fnum, G, P, m, runtype, dt, isave, nsave, showplot)
 %
 % "fibo_core" is a compute core for two-mode evolution, do not modify it.
 %
