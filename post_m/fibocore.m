@@ -24,7 +24,8 @@ function fibocore(fbase, fnum, G, P, m, runtype, dt, isave, nsave, showplot)
 global gamma;      % gamma(1,M)    complex array
 global force;      % force(1,2*M)  real array 
 global M;          % number of modes, M=m
-
+global V;          % weights for mode interactions
+  
 M = m;
 
 %-------------------------------------------------
@@ -65,6 +66,13 @@ M = m;
     force = force * sqrt(dt);
 
     A = zeros(nsave, 2*M);
+
+%-- interactions --
+
+    %-- V = ones(1,M);
+
+    Fi = fibonacci(M);
+    V  = sqrt(Fi);
 
 	
 %-- intergrate ---
@@ -130,6 +138,7 @@ function f = fdotA(x,t)
   
   global gamma;
   global M;
+  global V;
 
   q=[[0;0;0;0];x;[0;0;0;0]];
   q = reshape(q,2,M+4);
@@ -142,8 +151,10 @@ function f = fdotA(x,t)
   ap1 = a(4:M+3);
   ap2 = a(5:M+4);
 
+  vm2 = [0, 0, V(1:M-2)];
+  vm1 =    [0, V(1:M-1)];
 
-  q = -1i * ( am2 .* am1  + conj(am1) .* ap1 + conj(ap1) .* ap2) + gamma.*a0; 
+  q = -1i * ( vm2.*am2 .* am1  + vm1.*conj(am1) .* ap1 + V.*conj(ap1) .* ap2) + gamma.*a0; 
 
   f = [real(q); imag(q)];
   f = reshape(f, 1, 2*M);
