@@ -326,6 +326,8 @@ function   set_forcing_damping(G, P, runtype)
 %  force_type 4:     force = [0, ..., 0, P/Fi, P/Fi],   gamma = [G, G, 0, ..., 0];        inverse cascage balanced
 %  force_type 5:     force = [P, P, P, ..., P],         gamma = P*Fi/2;                   equilibrium by force
 %  force_type 6:     force = 2*G/Fi,                    gamma = [G, G, G, ..., G];        equilibrium by decay
+%  force_type 7:     direct cascade, 4+2 (forcing+damping)
+%  force_type 8:     direct cascade, 4+4 (forcing+damping)
 %
 
    global M;
@@ -380,6 +382,16 @@ function   set_forcing_damping(G, P, runtype)
 
      gamma = ones(1,M)*G;
      force = 2 * gamma ./ Fi;
+
+   elseif (force_type == 7)  % direct cascade 4+2
+
+     force(1:4) = P;
+     gamma(end-1:end) = G;
+
+   elseif (force_type == 8)  % direct cascade 4+4
+
+     force(1:4) = P;
+     gamma(end-3:end) = G;
 
    else 
      disp('Unknown type of forcing');
