@@ -42,16 +42,16 @@ M = m;
 
       [f0, t0] = restore_restart(fbase_ic);
 
-      save([fbase, '.param'], 'fnum', 'G', 'P', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
   
    else
 
-      save([fbase, '.param'], 'fnum', 'G', 'P', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
      
       seed  = -fnum;
       fnum  = 0;
       fbase    = [fbase, '.0000'];
-      save([fbase, '.param'], 'fnum', 'G', 'P', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
 
       randn('twister', seed);
       rand('twister', seed);
