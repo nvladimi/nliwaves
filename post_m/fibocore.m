@@ -62,7 +62,7 @@ M = m;
 
     end
 
-    set_forcing_damping(P, G1, G2);
+    set_forcing_damping(runtype, P, G1, G2);
 
     force = force * sqrt(dt);
 
@@ -320,7 +320,7 @@ end
 %---------------------
 
 
-function   set_forcing_damping(P, G1, G2)
+function   set_forcing_damping(runtype, P, G1, G2)
 %
 %  first digit in runtype determines initial condition
 %  second two digits determine forcing mode
