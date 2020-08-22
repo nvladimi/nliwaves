@@ -337,7 +337,7 @@ function   set_forcing_damping(runtype, P, G1, G2)
 
    m0 = rem(runtype,100);
 
-   force(m0)        = P;
+   force(m0)        = P/Fi(m0);
    gamma(1:2)       = G1;
    gamma(end-1:end) = G2;
 
