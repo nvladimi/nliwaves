@@ -1,4 +1,4 @@
-function fibocore(fbase, fnum, G, P, m, runtype, dt, isave, nsave, showplot)
+function fibocore(fbase, fnum, P, G1, G2, m, runtype, dt, isave, nsave, showplot)
 %
 % "fibo_core" is a compute core for two-mode evolution, do not modify it.
 %
@@ -10,8 +10,9 @@ function fibocore(fbase, fnum, G, P, m, runtype, dt, isave, nsave, showplot)
 % fbase        string base for output files
 % seed/fnum    when positive, use second argument to "fibo_core" to restore IC from (fnum-1) files,
 %              otherwise use it as a seed to create (fnum=0) file
-% G            level of damping (application depends on runtype)
-% P            level of forcing (application depends on runtype)
+% P            level of forcing at a specified middle mode
+% G1           level of damping at low modes
+% G2           level of damping at high modes
 % m            number of modes
 % runtype      integer to distinguish different forcing and damping and IC
 % dt           timestep
@@ -55,13 +56,13 @@ M = m;
       randn('twister', seed);
       rand('twister', seed);
  
-      f0 = set_IC(G, P, runtype);
+      f0 = set_IC(runtype);
 
       t0 = 0;
 
     end
 
-    set_forcing_damping(G, P, runtype);
+    set_forcing_damping(P, G1, G2);
 
     force = force * sqrt(dt);
 
@@ -255,23 +256,24 @@ end
 
 %---------------------
 
-function  f0 = set_IC(G, P, runtype)
+function  f0 = set_IC(runtype)
 %
 %  first digit in runtype determines initial condition
-%  second digit determines forcing
+%  second two digits determine forcing mode
 %
 %  ic_type 1:     a0 =  [1, 1, 0, ..., 0]
 %  ic_type 2:     a0 =  [1, 1, -1/sqrt(2), 0, ..., 0]
 %  ic_type 3:     |a0|^2 = 1/Fi,   random phases
-%  ic_type 4:     |a0|^2 = random, random phases 
+%  ic_type 4:     |a0|^2 = random [0:1], random phases 
+%  ic_type 5:     a0 = 0
 %
      
    global M;
 
    Fi = fibonacci(M);
 
-   ic_type = fix(runtype/10);
-
+   ic_type = fix(runtype/100);
+     
    if (ic_type == 1)
      
      f0 = zeros(2,M);
@@ -300,6 +302,10 @@ function  f0 = set_IC(G, P, runtype)
      f0(1,:) = amp.*cos(phi);
      f0(2,:) = amp.*sin(phi);
 
+   elseif (ic_type == 5)
+
+     f0 = zeros(2,M);
+
    else 
      disp('Unknown type of initial conditions');
      f0 = zeros(2,M);
@@ -314,22 +320,11 @@ end
 %---------------------
 
 
-function   set_forcing_damping(G, P, runtype)
+function   set_forcing_damping(P, G1, G2)
 %
 %  first digit in runtype determines initial condition
-%  second digit determines forcing
+%  second two digits determine forcing mode
 %
-%  force_type 0:     force = 0, gamma = 0;
-%  force_type 1:     force = [P, P, 0, ..., 0],         gamma = [0, ..., 0, G, G];        direct cascade
-%  force_type 2:     force = [P, P, 0, ..., 0],         gamma = [0, ..., 0, G*Fi, G*Fi];  direct cascade balanced  
-%  force_type 3:     force = [0, ..., 0, P, P],         gamma = [G, G, 0, ..., 0];        inverse cascade
-%  force_type 4:     force = [0, ..., 0, P/Fi, P/Fi],   gamma = [G, G, 0, ..., 0];        inverse cascage balanced
-%  force_type 5:     force = [P, P, P, ..., P],         gamma = P*Fi/2;                   equilibrium by force
-%  force_type 6:     force = 2*G/Fi,                    gamma = [G, G, G, ..., G];        equilibrium by decay
-%  force_type 7:     direct cascade, +4-2 (forcing/damping)
-%  force_type 8:     direct cascade, +4-4 (forcing/damping)
-%  force_type 9:     two cascade,  -2+1-2 (damping/forcing/damping)
-%  
 
    global M;
    global gamma;      % gamma(1,M)    complex array
@@ -340,69 +335,13 @@ function   set_forcing_damping(G, P, runtype)
    gamma = zeros(1,M); 
    force = zeros(1,M);
 
-   force_type = rem(runtype,10);
+   m0 = rem(runtype,100);
 
-   if (force_type == 0)
-     
-     % do nothing;
+   force(m0)        = P;
+   gamma(1:2)       = G1;
+   gamma(end-1:end) = G2;
 
-   elseif (force_type == 1)  % direct cascade
-
-     force(1) = P;
-     force(2) = P;
-     gamma(end) = G;
-     gamma(end-1) = G;
-
-   elseif (force_type == 2)  % balanced direct cascade
-				  
-     force(1) = P;
-     force(2) = P;
-     gamma(end) = G*Fi(end);
-     gamma(end-1) = G*Fi(end-1);
-
-   elseif (force_type == 3)  % inverse cascade
-
-     force(end) = P;
-     force(end-1) = P;
-     gamma(1) = G;
-     gamma(2) = G;
-
-   elseif (force_type == 4)  % balanced inverse cascade
-
-     force(end) = P/Fi(end);
-     force(end-1) = P/Fi(end-1);
-     gamma(1) = G;
-     gamma(2) = G;
-
-   elseif (force_type == 5)  % constant force
-
-     force = ones(1,M)*P;
-     gamma = 0.5 * force .* Fi;
-
-   elseif (force_type == 6)  % constant damping
-
-     gamma = ones(1,M)*G;
-     force = 2 * gamma ./ Fi;
-
-   elseif (force_type == 7)  % direct cascade +4-2
-
-     force(1:4) = P;
-     gamma(end-1:end) = G;
-
-   elseif (force_type == 8)  % direct cascade +4-4
-
-     force(1:4) = P;
-     gamma(end-3:end) = G;
-
-   elseif (force_type == 9)  % two cascades -2+1-2
-
-     force(round(M/2)) = P;
-     gamma(1:2)        = G;
-     gamma(end-1:end)  = G;
-
-   else 
-     disp('Unknown type of forcing');
-   end
+  %-- code specific ---
   
    gamma = -gamma;
    force = sqrt([force; force]) / sqrt(2);
