@@ -1,4 +1,4 @@
-function fibocore(fbase, fnum, P, G1, G2, m, runtype, dt, isave, nsave, showplot)
+function fibocore(fbase, fnum, P, G1, G2, m, v, runtype, dt, isave, nsave, showplot)
 %
 % "fibo_core" is a compute core for two-mode evolution, do not modify it.
 %
@@ -14,6 +14,7 @@ function fibocore(fbase, fnum, P, G1, G2, m, runtype, dt, isave, nsave, showplot
 % G1           level of damping at low modes
 % G2           level of damping at high modes
 % m            number of modes
+% v            power for prefactor, V = Fi^v
 % runtype      integer to distinguish different forcing and damping and IC
 % dt           timestep
 % isave        save data every "isave" timestep
@@ -42,16 +43,16 @@ M = m;
 
       [f0, t0] = restore_restart(fbase_ic);
 
-      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'v', 'runtype', 'dt', 'isave', 'nsave'); 
   
    else
 
-      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'v', 'runtype', 'dt', 'isave', 'nsave'); 
      
       seed  = -fnum;
       fnum  = 0;
       fbase    = [fbase, '.0000'];
-      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', "P", 'G1', 'G2', 'm', 'v', 'runtype', 'dt', 'isave', 'nsave'); 
 
       randn('twister', seed);
       rand('twister', seed);
@@ -70,12 +71,9 @@ M = m;
 
 %-- interactions --
 
-    %-- V = ones(1,M);
-
     Fi = fibonacci(M);
-    V  = sqrt(Fi);
+    V  = Fi.^v;
 
-	
 %-- intergrate ---
 
   t1 = [0:1]*dt;

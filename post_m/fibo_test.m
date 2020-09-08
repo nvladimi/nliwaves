@@ -39,6 +39,7 @@ showplot = 1;
 G        = 0;
 P        = 0;
 M        = 3;
+v        = 0;
 runtype  = 200;
 
 %---------------------
@@ -48,7 +49,7 @@ lsode_options ("absolute tolerance", 1e-10);
 lsode_options ("integration method", "adams");
 
 
-fibo_core(fbase, seed, P, G, G, M, runtype, dt, isave, nsave, showplot);
+fibo_core(fbase, seed, P, G, G, M, v, runtype, dt, isave, nsave, showplot);
 
 %---------------------
 
