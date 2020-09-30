@@ -5,9 +5,9 @@ function fibo_mi4D(fbase, saveimages)
 %  computes MI and entropies for this distributon
 % 
 %  header
-%  #1.fname  2.samples(M)  3.S4D    4.S1     5.S2     6.S3     7.S4    8.I4D
+%  
+%  #1.i0   2.MI      3.S4D       4.S1     5.S2     6.S3     7.S4   8.fname  9.samples(M) 
 %
-
 
 %--- data ---  
 
@@ -128,9 +128,11 @@ end %if saveimages
     I4D =  S1 + S2 + S3 - S4D;
 
  
-    printf('%s  %4d    %7.4f    %7.4f  %7.4f  %7.4f %7.4f   %7.4f\n', ...
-	   fbase,  ntot/1e6,   S4D, S1, S2, S3, S4,  I4D);
- 
+    printf('%3d  %7.4f  %7.4f    %7.4f  %7.4f  %7.4f  %7.4f   %s     %4d\n', ...
+        i0,  I4D,   S4D,      S1, S2, S3, S4,         fbase,  ntot/1e6);
+
+    clear all
+
 end
 
 %---------------------

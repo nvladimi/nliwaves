@@ -101,10 +101,11 @@ end %if saveimages
 
     I3D =  S2 + S3 - S3D;
 
- 
-    printf('%s  %4d    %7.4f     %7.4f  %7.4f %7.4f   %7.4f\n', ...
-	   fbase,  ntot/1e6,   S3D,   S2, S3, S4,  I3D);
- 
+    printf('%3d  %7.4f  %7.4f    %7.4f  %7.4f  %7.4f  %7.4f   %s     %4d\n', ...
+	   i0,  I3D,   S3D,      0,  S2, S3, S4,          fbase,  ntot/1e6);
+
+   clear all
+
 end
 
 %---------------------
