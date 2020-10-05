@@ -1,10 +1,11 @@
-function fibo_P4D(fbasein, fbaseout, fstart, seeds, i0, nB, dB)
+function fibo_P4D(fbasein, fbaseout, fstart, fend, seeds, i0, nB, dB)
 %
 %  Input:
 %
 %   fbasein     - string with base name for input files
 %   fbaseout    - string with base name for output files
 %   fstart      - file number to start with, in each seed
+%   fend        - file number to start with, in each seed
 %   fseeds      - array of seed numbers to analyze
 %   i0          - index of the third mode in triplet to consider
 %   dB          - width of the bins for n_i, in terms of <n_i>
@@ -36,7 +37,7 @@ function fibo_P4D(fbasein, fbaseout, fstart, seeds, i0, nB, dB)
 
            fname    = [fbase, '.',  num2str(fnum, '%04d'), '.ak'];
 
-           if exist(fname, "file")
+           if ( exist(fname, "file") & (fnum < fend) ) 
 
               load([fbase, '.',  num2str(fnum, '%04d'), '.param']);
  	   
@@ -55,7 +56,7 @@ function fibo_P4D(fbasein, fbaseout, fstart, seeds, i0, nB, dB)
               fnum = fnum+1;
               ntot = ntot + nsave;
  
-           else % file does not exist
+           else % file does not exist or beyond last to process
              break
            end
 
@@ -69,6 +70,9 @@ function fibo_P4D(fbasein, fbaseout, fstart, seeds, i0, nB, dB)
 
    save( fnameout, 'i0', 'nBins', 'dB', 'ntot',  'aa_avg'); 
 
+   dB
+   aa_avg
+   dBins
    dBins = dB*aa_avg;
 
 
@@ -92,7 +96,7 @@ function fibo_P4D(fbasein, fbaseout, fstart, seeds, i0, nB, dB)
 
            fname    = [fbase, '.',  num2str(fnum, '%04d'), '.ak'];
 
-           if exist(fname, "file")
+           if ( exist(fname, "file")  & (fnum < fend) ) 
 
               load([fbase, '.',  num2str(fnum, '%04d'), '.param']);
  	   
@@ -124,7 +128,7 @@ function fibo_P4D(fbasein, fbaseout, fstart, seeds, i0, nB, dB)
               fnum = fnum+1;
               ntot = ntot + nsave;
  
-           else % file does not exist
+           else % file does not exist or beyond last to process
              break
            end
 
