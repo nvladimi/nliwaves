@@ -1,7 +1,7 @@
 function fibo_moments(fbase, fname_out, fnums)
 %
-%  "fibo_timeavg" is the script to compute time averages for occupation numbers
-%  and ingegrals of motion over specified time intervals. 
+%  "fibo_moments" is the script to compute time averaged higher moments
+%  over specified time intervals. 
 %  Data input is from files "*.ak", data output to text file.
 %
 %  Input parameters:
@@ -51,8 +51,12 @@ function fibo_moments(fbase, fname_out, fnums)
    
     n = A.*conj(A);
     nk = sum(n, 1)/ntot;
-    m2k = sum(n.^2, 1)/ntot  ./ nk.^2 / 2  ;
-    m3k = sum(n.^3, 1)/ntot  ./ nk.^3 / 6  ;
+    m2k = sum(n.^2, 1)/ntot  ./ nk.^2 / 2;
+    m3k = sum(n.^3, 1)/ntot  ./ nk.^3 / 6;
+    m4k = sum(n.^4, 1)/ntot  ./ nk.^4 / 24;
+    m5k = sum(n.^5, 1)/ntot  ./ nk.^5 / 120;
+    m6k = sum(n.^6, 1)/ntot  ./ nk.^6 / 720;
+
     clear n
 
     aa = A(:, 1:end-1) .* A(:, 2:end);
@@ -77,17 +81,18 @@ function fibo_moments(fbase, fname_out, fnums)
     ss2k = [ss2k,0];
  
     gk = fk - nnk - 2*real(ss1k) - 2*real(ss2k);
+    gk = gk ./nnk;
 
    %-- print out averages ---
 
    fid = fopen(fname_out, "w");
    fprintf(fid, "# Moments  \n");
    fprintf(fid, "# computed by \'fibo_moments.m\' for \'%s\'. \n", fbase);
-   fprintf(fid, "# 1.i  2.Fi   3.nk  4.m2k  5.m3k   6.gk  7.fk  8.nnk  9.2re(ss1k)  10.2re(ss2k) \n\n");
+   fprintf(fid, "# 1.i  2.Fi  3.nk    4.m2k  5.m3k  6.m4k  7.m5k  8.m6k    9.gk  10.fk    11.nnk  12.2re(ss1k)  13.2re(ss2k) \n\n");
    for k=1:M
 
-     fprintf(fid, "%4d  %8d     %16.8e   %16.8e  %16.8e     %16.8e %16.8e    %16.8e  %16.8e  %16.8e\n", ...
-             k, Fi(k),   nk(k), m2k(k), m3k(k),    gk(k), fk(k),   nnk(k), 2*real(ss1k(k)),  2*real(ss2k(k)) );
+     fprintf(fid, "%4d  %8d  %16.8e    %16.8e  %16.8e  %16.8e  %16.8e  %16.8e    %16.8e %16.8e    %16.8e  %16.8e  %16.8e\n", ...
+                    k, Fi(k), nk(k),   m2k(k), m3k(k), m4k(k), m5k(k), m6k(k),   gk(k), fk(k),   nnk(k), 2*real(ss1k(k)),  2*real(ss2k(k)) );
     
    end
 
