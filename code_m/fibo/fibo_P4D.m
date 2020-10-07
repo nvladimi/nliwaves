@@ -37,7 +37,7 @@ function fibo_P4D(fbasein, fbaseout, fstart, fend, seeds, i0, nB, dB)
 
            fname    = [fbase, '.',  num2str(fnum, '%04d'), '.ak'];
 
-           if ( exist(fname, "file") & (fnum < fend) ) 
+           if ( exist(fname, "file") && (fnum < fend) ) 
 
               load([fbase, '.',  num2str(fnum, '%04d'), '.param']);
  	   
@@ -96,7 +96,7 @@ function fibo_P4D(fbasein, fbaseout, fstart, fend, seeds, i0, nB, dB)
 
            fname    = [fbase, '.',  num2str(fnum, '%04d'), '.ak'];
 
-           if ( exist(fname, "file")  & (fnum < fend) ) 
+           if ( exist(fname, "file")  && (fnum < fend) ) 
 
               load([fbase, '.',  num2str(fnum, '%04d'), '.param']);
  	   
