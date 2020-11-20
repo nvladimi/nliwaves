@@ -1,0 +1,110 @@
+-----------------------------------------------------------
+  NLIWAVES  - NONLINEAR WAVES 
+  RANDOMIZING AND RESIZING RESTART FILES
+-----------------------------------------------------------
+
+  Go to you git directory (the directory where you downloaded the original code) and update it
+     
+     >> git pull origin master
+
+  You will need the following files from "post_m" directory in your working directory
+
+     myrand48_seed.m
+     read_psi.m
+     rerand_psi.m     
+     resize_psi.m
+
+  In a typical restart the following files are used without modifications: 
+
+     *.psi.????          field data (binary)
+     *.seed.????         random seed (binary) to recreate the same sequence of random numbers
+     *.tag               current restart number and number of timesteps (text) 
+     *.in                simulation parameters (text)
+
+  The seed reproduces the same sequence of random numbers only with the same number of tasks.
+  To create a new sequence, "myrand48_seed.m" can be used.  Scripts "rerand_psi.m" and
+  "resize_psi.m" moduify the field data.  All *.m scripts can be run on login nodes,
+  from octave's command line, after loading "octave" module.
+
+
+----------------------------------------------------------
+  TESTS FOR RANDOMIZATION AND RESIZING
+-----------------------------------------------------------
+
+Let's use simulation "a1" for this.
+
+
+1a.  Take a look at the interface of "rerand_psi.m"
+
+% 
+%   rerand_psi(fname_in, fname_out, N, seed, randomness)
+%
+%   Input:
+%
+%       fname_in:   binary input file (size N)
+%       fname_out:  binary output file (size N)
+%       N:          number of gridpoints in each direction
+%       seed:       master seed (integer)
+%       randomness: [0,1)
+%
+
+  
+1b. Create new field data with randomness 0.01, 0.1, 1 and master seeds 1, 2, 3, 4.
+    Do not modify *.seed.???? or *.tag files.
+    Do not change the number of tasks.
+
+1c. Run 12 new simulaions plus 1 original for the same time.
+    Plot time dependencies for comparison.
+
+
+2a.  Take a look at interface of "myrand48_seed.m"
+
+%
+%  myrand48_seed(fname, np, seed)
+%
+%  Input:
+%       fname:  file name to create, in format "*.seed.????"
+%       np:     number of processes to run on
+%       seed:   master seed (integer)
+%
+
+2b.  Create new random sequences with master seeds 1, 2, 3, 4.
+   Do not modify field data or *.tag files.
+   Do not change the number of tasks.
+
+
+2c. Run 4 new simulations plus 1 original for the same time.
+    Plot time dependencies for comparison.
+
+
+3a. Take a look at interface of "resize_psi.m"
+
+function resize_psi(fname_in, fname_out, N1, N2)
+% 
+%   resize_psi(fname_in, fname_out, N1, N2)
+%
+%   Input:
+%
+%       fname_in:   binary input file (size N1)
+%       fname_out:  binary output file (size N2)
+%       N1, N2:     number of gridpoints in each direction
+%
+
+3b.  Create new field data with N2=256, N2=384, and N2=512.
+     Assume starting from t=0 and file=0.
+
+     Create "*.tag" files containing
+     
+     0  0  0  # nio n0 grid 
+
+     Create new seed sequences "*.seed.0000" with master seed=0.
+
+     Adjust time step in "*.in" files.
+ 
+3c. Run 3 new simulations for the same time.
+    Plot time dependencies for comparison.
+
+
+
+------------------------------------------------------------
+

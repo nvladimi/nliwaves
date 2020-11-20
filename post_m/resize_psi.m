@@ -1,11 +1,12 @@
 function resize_psi(fname_in, fname_out, N1, N2)
 %
-  %   resize_psi(fname_in, fname_out, N1, N2)
+%   resize_psi(fname_in, fname_out, N1, N2)
 %
 %   Input:
 %
 %       fname_in:   binary input file (size N1)
 %       fname_out:  binary output file (size N2)
+%       N1, N2:     number of gridpoints in each direction
 %
 
   fid = fopen(fname_in, 'rb');

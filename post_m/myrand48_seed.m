@@ -1,4 +1,12 @@
 function myrand48_seed(fname, np, seed)
+%
+%  myrand48_seed(fname, np, seed)
+%
+%  Input:
+%       fname:  file name to create, in format "*.seed.????"
+%       np:     number of processes to run on
+%       seed:   master seed (interger)
+%
 
   jmax = 100;
   

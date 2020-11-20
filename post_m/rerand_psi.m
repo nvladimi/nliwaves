@@ -1,11 +1,13 @@
 function rerand_psi(fname_in, fname_out, N, seed, randomness)
 %
-%   rerand_psi(fname_in, fname_out, N, randomness)
+%   rerand_psi(fname_in, fname_out, N, seed, randomness)
 %
 %   Input:
 %
 %       fname_in:   binary input file (size N)
 %       fname_out:  binary output file (size N)
+%       N:          number of gridpoints in each direction
+%       seed:       master seed (integer)
 %       randomness: [0,1)
 %
 
