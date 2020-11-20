@@ -43,6 +43,8 @@ function fibo_P4D(fbasein, fbaseout, fstart, fend, seeds, i0, nB, dB)
  	   
               fid = fopen(fname, 'rb');
               a = fread(fid, nsave*(2*m+1), 'double');
+              fclose(fid);
+
               a = reshape(a, [nsave, 2*m+1]);
 
               ind = (1:m)*2;
@@ -102,6 +104,8 @@ function fibo_P4D(fbasein, fbaseout, fstart, fend, seeds, i0, nB, dB)
  	   
               fid = fopen(fname, 'rb');
               a = fread(fid, nsave*(2*m+1), 'double');
+              fclose(fid);
+
               a = reshape(a, [nsave, 2*m+1]);
 
               ind = (1:m)*2;

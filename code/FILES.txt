@@ -5,7 +5,8 @@
 
 Makefile                makes nls.x, nlspost.x, or nlstest.x
 
-executable: nls.x       time evolution of 2D psi 
+executable: nls.x       time evolution of 2D psi
+	    		in nonlinear Schrodinger Equation
 
   header.h              declaration of global functions and structures
   main.c                main driver: time, IC, and IO manager
@@ -33,6 +34,34 @@ executable: nlspost.x   parallel post processing of binary psi
   post_bumps.c          compute H(r) and NP(r) around each maximum
   post_param.c          read text input file, write text header
   post_io.c             (mostly) binary input / output
+
+
+executable: nls.x       time evolution of 2D psi 
+
+
+executable: capillary.x       time evolution of 2D psi
+	    		in capillary wave Equation
+
+  header.h              declaration of global functions and structures
+  main.c                main driver: time, IC, and IO manager
+  grids.c		initialization of grids and regridding subroutines (not used)
+  fftw_wrap.c		wrappers for FFTW3 routines
+  fft_extra.c           spectral derivatives and other fft-based routines
+  io.c                  (mostly) binary input / output
+  evolve_rk.c           wrapper for one step of Runger-Kutta and forcing routines
+  rk.c                  Runge-Kutta time advancement
+  rhs_capillary.c       right hand side for Runge-Kutta routines (except forcing)
+  forcing_rk.c          forcing term for right-hand-side
+  myrand48.c            random numbers manager (assign and save seeds for all tasks) 
+  infodat_capillary.c   global quanitities for capillary setup seved in *.dat file
+  diag_capillary.c      wrapper for diagnostics, used only for spectrum
+  diag_spectrum.c       time-averaging of spectrum for diagnostic purposes
+  timers.c              collect performance info by subroutine
+  arrays.c              creation, copying, and differentiation of arrays
+                        with central differences (non used)
+  collapse_one.c        not used
+  mask.c                not used
+
 
 
 executable: nlstest.x   tests for various components of the code
