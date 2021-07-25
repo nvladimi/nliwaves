@@ -1,0 +1,43 @@
+#!/bin/bash
+#----------------------------------------------------
+# Example SLURM job script to run multiple octave
+# applications within one batch job on TACC's
+# Comet system.
+#----------------------------------------------------
+#SBATCH -A TG-DMS140028         # Project account name
+#SBATCH -J fibopost             # Job name
+#SBATCH -o z.fp.o%j            # Name of stdout output file(%j expands to jobId)
+#SBATCH -e z.fp.e%j            # Name of stderr output file(%j expands to jobId)
+#SBATCH -p shared               # Submit to the 'debug' or 'shared' queue (partition)
+#SBATCH -N 1                    # Total number of nodes requested (use N=1)
+#SBATCH -n 1                    # Total number of mpi tasks requested (24 max)
+#SBATCH -t 01:00:00             # Run time (hh:mm:ss) - max 30 min for debug, 48 hrs for compute/shared
+
+ 
+#---------------------------------
+
+
+
+date
+
+
+module load anaconda3
+
+fexec=fiboPost_wrap.py
+
+# create *_flx.txt and  *_mts.txt 
+
+#run=r1_v38L06_dt3 ; python3 $fexec $run  POST/$run
+#run=r1_v58R19_dt3 ; python3 $fexec $run  POST/$run
+
+run=r1_m10_R050  ; python3 $fexec $run  POST/$run
+run=r1_m10_R100  ; python3 $fexec $run  POST/$run
+run=r1_m10_R200  ; python3 $fexec $run  POST/$run
+
+run=r1_m50_L050  ; python3 $fexec $run  POST/$run
+run=r1_m50_L100  ; python3 $fexec $run  POST/$run
+run=r1_m50_L200  ; python3 $fexec $run  POST/$run
+
+date
+
+

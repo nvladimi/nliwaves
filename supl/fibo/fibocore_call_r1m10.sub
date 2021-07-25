@@ -1,0 +1,43 @@
+#!/bin/bash
+#----------------------------------------------------
+# Example SLURM job script to run multiple octave
+# applications within one batch job on TACC's
+# Comet system.
+#----------------------------------------------------
+#SBATCH -A TG-DMS140028         # Project account name
+#SBATCH -J fib10                # Job name
+#SBATCH -o z.f10.o%j            # Name of stdout output file(%j expands to jobId)
+#SBATCH -e z.f10.e%j            # Name of stderr output file(%j expands to jobId)
+#SBATCH --partition=shared      # Submit to the 'debug' or 'compute' or 'shared'  queue
+#SBATCH --nodes=1               # Total number of nodes requested (use N=1)
+#SBATCH --ntasks-per-node=1     # Total number of mpi tasks requested (24 max)
+#SBATCH --mem=2G                # for use in large-shared queue
+#SBATCH -t 24:00:00             # Run time (hh:mm:ss) - max 30 min for debug, 48 hrs for compute/shared
+#SBATCH --export=ALL
+
+date
+  
+  fbase=$1
+  g1=$2
+  g2=$3
+  seed=$4
+
+  echo $fbase $g1 $g2 $seed
+
+  module load gcc
+  module load openmpi
+  module load octave
+
+  fexec=fibocore_call_R1.m
+
+  v=0.5
+  typ=310
+  dt=0.001  
+
+  mkdir $fbase  
+  octave -qf $fexec  $fbase/$fbase  $v $typ  $g1 $g2 $dt $seed
+
+
+date
+
+
