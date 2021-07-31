@@ -25,19 +25,7 @@ def datasets(fbase):
             #print(os.path.join("/mydir", file))
 
     return(sets)
-
-#==============================================================================
-
-def AtoB(m,v,P):
-   import numpy as np
-
-   p = np.arange(m) + 1
-   p = (p*(1+v) - 1 - 2*v)/3
-   #c = ( (1 + np.sqrt(5))/2 )**p * P**(-1/3)
-   phi = (1 + np.sqrt(5))/2
-   c = phi**p * (P/2)**(-1/3) * 5**(-v/6)
-       
-   return(c)
+    
 
 #==============================================================================
 
@@ -71,15 +59,14 @@ def avgSpectra(dir, fnameout=''):
     
 #==============================================================================
 
-def Moments(fbase, nmom=12, istart=1, iend=-1, convert=False, fbaseout=''):
+def Moments(fbase, nmom=12, istart=1, iend=-1, fbaseout=''):
 
     import numpy as np
     import os
 
     sets = datasets(fbase)
-    nmodes, nsave, v, P = ReadParam(sets[0])
-    a2b = AtoB(m, v, P)
-
+    nmodes, nsave, v = ReadParam(sets[0])
+    
     momsum = np.zeros((nmodes, nmom))
      
     ntot = 0
@@ -104,12 +91,7 @@ def Moments(fbase, nmom=12, istart=1, iend=-1, convert=False, fbaseout=''):
             iim = ire + 1;
     
             ak = np.sqrt(dat[:,ire]**2 + dat[:,iim]**2)
-
-            n = ak.shape[0]
-            if convert:
-                for i in range(n):
-                    ak[i,:] = ak[i,:] * a2b
-            
+ 
             for k in range(1,nmom+1):
     
                 momsum[:,k-1] += np.average(ak**k,0)
@@ -168,7 +150,7 @@ def Flux(fbase, istart=1, iend=-1, fbaseout=''):
     import os
 
     sets = datasets(fbase)
-    m, nsave, v, P = ReadParam(sets[0])
+    m, nsave, v = ReadParam(sets[0])
 
     Fi = Fibonacci(m)
     
@@ -298,115 +280,6 @@ def Flux(fbase, istart=1, iend=-1, fbaseout=''):
         
         np.savetxt(fnameout, dataout, header = h)
 
-
-
-
-
-#==============================================================================
-#
-# Compute "n_k" and multmode correlator Q[k] = <a^*[k] a[k+j1] a[k+j2] ... >
-# where positive or negative "j" are taken from an input array "jj" 
-# for flux J use jj = [-2, -1]
-# for K use jj = [-4, -3, -1]
-# for H use jj = [-6, -5, -3, -1] 
-
-def modeCorr(fbase, jj, istart=1, iend=-1, convert=True, fbaseout=''):
-    
-    import numpy as np
-    import os
-
-    sets = datasets(fbase)
-    m, nsave, v, P = ReadParam(sets[0])
-    
-    a2b = AtoB(m, v, P)
-
-    #-- avearaging --
-
-    Q  = np.zeros(m) + 1j *  np.zeros(m)
-    nk = np.zeros(m)
-    ntot = 0
-    
-    for s in sets:
-        
-        ifile = istart
-        
-        while True:
-
-            #-- read data --
-            
-            fname = s + '/'+ s + '.' + str(ifile).zfill(4) + '.ak'       
-
-            print(fname)
-            
-            if (os.path.isfile(fname) &  ((iend < 0) | (ifile < iend)) ) :
-                dat = np.fromfile(fname, 'float64')
-                dat = dat.reshape(2*m+1, round(len(dat)/(2*m+1))).transpose()
-                ifile += 1
-            else:
-                #print("Last file read:  " + fname + ";    datapoints:  " +  str(len(dat)) )
-                break
-
-            ire = np.arange(m)*2 + 1
-            iim = ire + 1;
-    
-            ak = dat[:,ire] + 1j*dat[:,iim]
-            n = ak.shape[0]
-            if convert:
-                for i in range(n):
-                    ak[i,:] = ak[i,:] * a2b
-
-            #-- correlator --
-
-            q   = np.real(ak * np.conjugate(ak))
-            nk += np.sum(q, 0)
-                    
-            q = np.conjugate(ak)
-            for j in jj:
-                if (j<0):
-                    q = q * np.hstack((np.zeros([n,-j]), ak[:,:j]))
-                elif (j>0):
-                    q = q * np.hstack(ak[j:,:], np.zeros([n,j]))
-                else:
-                    q = q * ak
-                    
-            Q  += np.sum(q,0)
-
-            ntot += n
-
-    nk  = nk/ntot
-    Q   = Q/ntot
-
-    #-- normalization factor --
-
-    q = nk
-    for j in jj:
-         
-        if (j<0):
-            q = q * np.hstack(( np.zeros(-j), nk[:j] ))
-        elif (j>0):
-            q = q * np.hstack(( nk[j:], np.zeros(j) ))
-        else:
-            q = q * nk
-
-   
-    #-- Output to text file --
-    
-    if (len(fbaseout) > 0):
-
-        fnameout = fbaseout + "_mcr.txt"
-
-        i = np.arange(m)+1
-        
-        dataout = np.vstack( (i, nk, np.sqrt(q), np.real(Q), np.imag(Q) ) ).T
-        
-        
-        h = 'Run \"'+ fbase + '\':  ' + str(ntot) + ' snapshots\n'
-        h = h + "j = {}\n".format(jj)
-        h = h + "1.i  2.nk  3.sqrt|nj|   4.Re(Q)  5.Im(Q) \n\n"
-        
-        np.savetxt(fnameout, dataout, header = h)
-
-        
         
 #================================================================
 
@@ -451,12 +324,8 @@ def ReadParam(fbase):
         if ( s2[0].count('name: v') > 0):
             v = float(s2[1])
 
-        if ( s2[0].count('name: P') > 0):
-            P = float(s2[1])
-
-            
                       
-    return([m, nsave, v, P])
+    return([m, nsave, v])
 
 
  
