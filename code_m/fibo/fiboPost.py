@@ -263,15 +263,15 @@ def ReadParam(fbase):
         s1 = s.replace("\n#", ";")
         s2 = s1.split("\n")        
         
-        if ( s2[0].count('name: nsave') > 0):
+        if ( s2[0].count('name: nsave;') > 0):
             nsave = int(s2[1])
-        if ( s2[0].count('name: m') > 0):
+        if ( s2[0].count('name: m;') > 0):
             m = int(s2[1])
 
-        if ( s2[0].count('name: alpha') > 0):
+        if ( s2[0].count('name: alpha;') > 0):
             alpha = float(s2[1])
 
-        if ( s2[0].count('name: PI') > 0):
+        if ( s2[0].count('name: PI;') > 0):
             PI = float(s2[1])
 
             

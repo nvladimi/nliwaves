@@ -42,16 +42,19 @@ RUNTYPE = runtype;
 
       [f0, t0] = restore_restart(fbase_ic);
 
-      save([fbase, '.param'], 'fnum', "PI", 'G1', 'G2', 'm', 'alpha', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', 'runtype', ...
+	   'alpha', 'm', 'mp', 'PI', 'G1', 'G2', 'dt', 'isave', 'nsave'); 
   
    else 
 
-      save([fbase, '.param'], 'fnum', "PI", 'G1', 'G2', 'm', 'alpha', 'runtype', 'dt', 'isave', 'nsave'); 
-     
+      save([fbase, '.param'], 'fnum', 'runtype', ...
+	   'alpha', 'm', 'mp', 'PI', 'G1', 'G2', 'dt', 'isave', 'nsave'); 
+    
       seed  = -fnum;
       fnum  = 0;
       fbase    = [fbase, '.0000'];
-      save([fbase, '.param'], 'fnum', "PI", 'G1', 'G2', 'm', 'alpha', 'runtype', 'dt', 'isave', 'nsave'); 
+      save([fbase, '.param'], 'fnum', 'runtype', ...
+	   'alpha', 'm', 'mp', 'PI', 'G1', 'G2', 'dt', 'isave', 'nsave'); 
 
       randn('twister', seed);
       rand('twister', seed);
@@ -77,19 +80,20 @@ RUNTYPE = runtype;
 
        i = 1:M;
        phi = (1 + sqrt(5))/2;
-       q = i*(2*alpha - 1) + 1 - alpha;
-       V1  = (PI * phi.^q).^(1/3)  ;
-       V0 =  V1/phi;
-       V2 =  V1*phi;
+       q = i*(2*alpha - 1)/3;
+       V1 = phi.^q;
+       V2 =  V1 * phi;
+       V0 =  V1 / phi;
 
-       Pp  = PI;
+       q = mp*(2*alpha - 1)/3 - (1+alpha);
+       Pp  = PI * 2*sqrt(5) * phi**q;
 
     elseif (RUNTYPE == "dblA")
 
        i = 1:M;
        V1  = 2.^(alpha*i - alpha) ;
        V0 =  2.^(alpha*i + 1);
-
+ 
        Pp  = PI/2^mp;
 
     elseif (RUNTYPE == "dblB")
