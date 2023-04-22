@@ -1,0 +1,23 @@
+#
+# NO BLANK LINES!
+# Parametres for "giaflucs.m"
+#----------------------------
+datadir      ./data/set001   # directory for fbase.000001 files; make sure it exists
+Cnsq         4.64e-16        # cm^(-2/3)
+N            1024            # gridpoints in each direction 
+dx           0.27            # cm, spacing b/w points
+steps        10              # number of screens
+dz           3.5e4           # cm, distance b/w screens
+lambda       1.064e-4        # cm, laser wavelength
+w0           1.5             # cm, beam radius
+#---------------------------
+# Parameters for "run_profiles.m"
+# Set nseeds to nonzero to scan seeds in [1:nseeds], otherwise read seeds from file.
+# Average profiles with I1<Imax<I2 for consecutive scan, otherwise average all.  
+#---------------------------
+nseeds       0              # set to nonzero for consecutive scan
+I1           0.0            # lower limit for consecutive scan
+I2           1.0            # upper limit for consecutive scan
+factor       4              # factor for interpolation to denser grid
+numtheta     60             # number of angles for radial interpolation
+#---------------------------

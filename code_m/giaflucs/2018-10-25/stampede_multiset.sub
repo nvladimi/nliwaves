@@ -1,0 +1,41 @@
+#!/bin/bash
+#----------------------------------------------------
+# Example SLURM job script to run multiple octave
+# applications within one batch job on TACC's
+# Stampede system.
+#----------------------------------------------------
+#SBATCH -A TG-DMS140028         # Project account name
+#SBATCH -J multiset             # Job name
+#SBATCH -o z.o%j                # Name of stdout output file(%j expands to jobId)
+#SBATCH -e z.e%j                # Name of stderr output file(%j expands to jobId)
+#SBATCH -p development          # Submit to the 'normal', 'development', or 'long' queue
+#SBATCH -N 1                    # Total number of nodes requested (use N=1)
+#SBATCH -n 3                    # Total number of mpi tasks requested (272 max)
+#SBATCH -t 02:00:00             # Run time (hh:mm:ss) - max 48 hrs for normal, 96 for long, 2 for development
+
+
+#--  Before running, create a parameter file, "set001.param", etc, for each set. 
+#--  Submitting the job, use number of tasks "n" equal to the number of sets.
+ 
+#-- do not edit below this line -------------------
+
+cd $SLURM_SUBMIT_DIR
+
+echo SLURM NTASKS: $SLURM_NTASKS
+date
+
+i=0
+n=1
+while [ $i -lt $SLURM_NTASKS ]
+do
+     fbase=$(printf set%03d $n)
+     numactl -C +$i octave -qf run_mset.m $fbase &
+     let i=i+1
+     let n=n+1
+done
+
+wait # IMPORTANT: wait for all to finish or get killed
+date
+
+
+
